@@ -16,6 +16,7 @@ http://www.ogre3d.org/wiki/
 */
 
 #include "TutorialApplication.h"
+#include <OgreVector3.h>
 
 //---------------------------------------------------------------------------
 TutorialApplication::TutorialApplication(void)
@@ -32,7 +33,8 @@ void TutorialApplication::createScene(void)
     // Create the scene
     Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
  
-    Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Head");
+    headNode->setPosition(0.f, 0.f, 0.f);
     headNode->attachObject(ogreHead);
  
     // Set ambient light
@@ -43,6 +45,18 @@ void TutorialApplication::createScene(void)
     l->setPosition(20,80,50);
 }
 //---------------------------------------------------------------------------
+
+bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+    // todo: check hasSceneNode instead of letting exception get thrown
+    Ogre::SceneNode* ogreHeadNode = mSceneMgr->getSceneNode("Head");
+
+    if (ogreHeadNode)
+    {
+        Ogre::Vector3 position = ogreHeadNode->getPosition() + Ogre::Vector3(0.f, 0.f, -1.f);
+        ogreHeadNode->setPosition(position);
+    }
+}
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN
