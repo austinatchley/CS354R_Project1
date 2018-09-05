@@ -516,6 +516,7 @@ on skipper
 
 config.status:1154: creating Makefile
 config.status:1154: creating config.h
+config.status:1335: config.h is unchanged
 config.status:1383: executing depfiles commands
 config.status:1383: executing libtool commands
 
@@ -650,7 +651,7 @@ pkg_cv_OIS_LIBS=-lOIS
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /u/austina/GameTech/BaseApp/missing aclocal-1.15'
+ACLOCAL='${SHELL} /u/austina/GameTech/Project1/missing aclocal-1.15'
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
@@ -660,9 +661,9 @@ AM_DEFAULT_V='$(AM_DEFAULT_VERBOSITY)'
 AM_DEFAULT_VERBOSITY='1'
 AM_V='$(V)'
 AR='ar'
-AUTOCONF='${SHELL} /u/austina/GameTech/BaseApp/missing autoconf'
-AUTOHEADER='${SHELL} /u/austina/GameTech/BaseApp/missing autoheader'
-AUTOMAKE='${SHELL} /u/austina/GameTech/BaseApp/missing automake-1.15'
+AUTOCONF='${SHELL} /u/austina/GameTech/Project1/missing autoconf'
+AUTOHEADER='${SHELL} /u/austina/GameTech/Project1/missing autoheader'
+AUTOMAKE='${SHELL} /u/austina/GameTech/Project1/missing automake-1.15'
 AWK='gawk'
 CC='gcc'
 CCDEPMODE='depmode=gcc3'
@@ -699,7 +700,7 @@ LIPO=''
 LN_S='ln -s'
 LTLIBOBJS=''
 LT_SYS_LIBRARY_PATH=''
-MAKEINFO='${SHELL} /u/austina/GameTech/BaseApp/missing makeinfo'
+MAKEINFO='${SHELL} /u/austina/GameTech/Project1/missing makeinfo'
 MANIFEST_TOOL=':'
 MKDIR_P='/bin/mkdir -p'
 NM='/usr/bin/nm -B'
@@ -765,7 +766,7 @@ host_vendor='pc'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /u/austina/GameTech/BaseApp/install-sh'
+install_sh='${SHELL} /u/austina/GameTech/Project1/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'

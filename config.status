@@ -437,7 +437,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/u/austina/GameTech/BaseApp'
+ac_pwd='/u/austina/GameTech/Project1'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -951,12 +951,12 @@ S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /u/austina/GameTech/BaseApp/install-sh"
-S["MAKEINFO"]="${SHELL} /u/austina/GameTech/BaseApp/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /u/austina/GameTech/BaseApp/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /u/austina/GameTech/BaseApp/missing automake-1.15"
-S["AUTOCONF"]="${SHELL} /u/austina/GameTech/BaseApp/missing autoconf"
-S["ACLOCAL"]="${SHELL} /u/austina/GameTech/BaseApp/missing aclocal-1.15"
+S["install_sh"]="${SHELL} /u/austina/GameTech/Project1/install-sh"
+S["MAKEINFO"]="${SHELL} /u/austina/GameTech/Project1/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /u/austina/GameTech/Project1/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /u/austina/GameTech/Project1/missing automake-1.15"
+S["AUTOCONF"]="${SHELL} /u/austina/GameTech/Project1/missing autoconf"
+S["ACLOCAL"]="${SHELL} /u/austina/GameTech/Project1/missing aclocal-1.15"
 S["VERSION"]="0.1"
 S["PACKAGE"]="SampleApp"
 S["CYGPATH_W"]="echo"
