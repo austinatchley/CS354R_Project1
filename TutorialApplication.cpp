@@ -29,7 +29,18 @@ TutorialApplication::~TutorialApplication(void)
 //---------------------------------------------------------------------------
 void TutorialApplication::createScene(void)
 {
-    // Create your scene here :)
+    // Create the scene
+    Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
+ 
+    Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    headNode->attachObject(ogreHead);
+ 
+    // Set ambient light
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+ 
+    // Create a light
+    Ogre::Light* l = mSceneMgr->createLight("MainLight");
+    l->setPosition(20,80,50);
 }
 //---------------------------------------------------------------------------
 
