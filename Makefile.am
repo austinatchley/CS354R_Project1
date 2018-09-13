@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS= -I m4
-noinst_HEADERS= BaseApplication.h TutorialApplication.h EntityManager.h EventManager.h Ball.h GameObject.h 
+noinst_HEADERS= BaseApplication.h TutorialApplication.h ComponentManager.h EntityManager.h EventManager.h Ball.h GameObject.h 
 
 bin_PROGRAMS= OgreApp
 OgreApp_CPPFLAGS= -I$(top_srcdir) -std=c++11

@@ -334,7 +334,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 ACLOCAL_AMFLAGS = -I m4
-noinst_HEADERS = BaseApplication.h TutorialApplication.h EntityManager.h EventManager.h Ball.h GameObject.h 
+noinst_HEADERS = BaseApplication.h TutorialApplication.h ComponentManager.h EntityManager.h EventManager.h Ball.h GameObject.h 
 OgreApp_CPPFLAGS = -I$(top_srcdir) -std=c++11
 OgreApp_SOURCES = BaseApplication.cpp TutorialApplication.cpp EventManager.cpp Ball.cpp GameObject.cpp
 OgreApp_CXXFLAGS = -I/usr/include/OGRE -pthread $(OIS_CFLAGS)

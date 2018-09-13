@@ -2,12 +2,9 @@
 
 namespace ECS
 {
+    /////////////////////////////////////
     EventManager::EventManager()
     {
-        if (!mEventManager)
-        {
-            mEventManager = this;
-        }
     }
 
     EventManager::~EventManager()
@@ -22,11 +19,11 @@ namespace ECS
 
         if (it != entityToHandlers.end())
         {
-            auto& set = *it;
+            auto& set = it->second;
 
-            for (auto handler : set)
+            for (auto handler = set.begin(); handler != set.end(); ++handler)
             {
-                handler->(*event)(args...);
+                (*event)(args...);
             }
         }
     }
