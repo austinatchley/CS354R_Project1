@@ -74,10 +74,10 @@ namespace ECS
         void destroy(EntityId entityId);
 
         // Returns the Entity with entityId
-        Entity* get(EntityId entityId);
+        Entity* get(EntityId entityId) const;
 
         // Returns the EntityId associated with this entity
-        EntityId getID(Entity* entity);
+        EntityId getId(Entity* entity) const;
 
     private:
         static EntityManager* mInstance;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Ogre.h>
+
 #include "EntityManager.h"
 #include "ComponentManager.h"
 
@@ -9,33 +10,26 @@
 
 namespace ECS
 {
-    template <typename Component>
     class EventHandler
     {
     	typedef void (Component::* Fptr)(void);
-	friend class EventManager;
+	    friend class EventManager;
 
     public:
-    	EventHandler(Component* component, Fptr function)
-            : comp(component)
-            , func(function)
+    	EventHandler(Component* component, Fptr& callback)
+            : mComponent(component)
+            , mCallback(callback)
         {}
             
-        void connect();
-        void connect(EntityId id);
-
-        void disconnect();
-        void disconnect(EntityId id);
-
     private:
         template <class ...Types>
         void execute(Types... args)
         {
-       	    (comp->*func)(args...);
+       	    (mComponent->*mCallback)(args...);
        	}
 
-        Component* comp;
-    	Fptr func;
+        Component* mComponent;
+    	Fptr mCallback;
     };    
 
     class EventManager
@@ -50,6 +44,9 @@ namespace ECS
 
             return mInstance;
         }
+
+        void connect(EventHandler handler, ComponentId componentId);
+        void disconnect(EventHandler handler, ComponentId componentId);
 
 	    void update();
 
@@ -70,6 +67,6 @@ namespace ECS
         ~EventManager();
 
         static EventManager* mInstance;
-        std::unordered_map<EntityId, std::vector<EventHandler<Component>>> mEntityToHandlers;
+        std::unordered_map<EventHandler, std::vector<ComponentId>> mHandlerToComponents;
     };
 }
