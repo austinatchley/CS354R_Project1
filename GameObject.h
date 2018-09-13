@@ -9,5 +9,5 @@ namespace Game
     public:
         GameObject();
         ~GameObject();
-    }
+    };
 }

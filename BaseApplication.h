@@ -68,7 +68,11 @@ http://www.ogre3d.org/wiki/
 
 //---------------------------------------------------------------------------
 
-class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener
+class BaseApplication
+    : public Ogre::FrameListener
+    , public Ogre::WindowEventListener
+    , public OIS::KeyListener
+    , public OIS::MouseListener
 {
 public:
     BaseApplication(void);
