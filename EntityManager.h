@@ -2,5 +2,5 @@
 
 namespace ECS
 {
-    using EntityId = unsigned long;
+    typedef unsigned EntityId;
 }

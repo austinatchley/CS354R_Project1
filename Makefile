@@ -109,7 +109,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_OgreApp_OBJECTS = OgreApp-BaseApplication.$(OBJEXT) \
-	OgreApp-TutorialApplication.$(OBJEXT) OgreApp-Ball.$(OBJEXT) \
+	OgreApp-TutorialApplication.$(OBJEXT) \
+	OgreApp-EventManager.$(OBJEXT) OgreApp-Ball.$(OBJEXT) \
 	OgreApp-GameObject.$(OBJEXT)
 OgreApp_OBJECTS = $(am_OgreApp_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -334,8 +335,8 @@ top_builddir = .
 top_srcdir = .
 ACLOCAL_AMFLAGS = -I m4
 noinst_HEADERS = BaseApplication.h TutorialApplication.h EntityManager.h EventManager.h Ball.h GameObject.h 
-OgreApp_CPPFLAGS = -I$(top_srcdir)
-OgreApp_SOURCES = BaseApplication.cpp TutorialApplication.cpp Ball.cpp GameObject.cpp
+OgreApp_CPPFLAGS = -I$(top_srcdir) -std=c++11
+OgreApp_SOURCES = BaseApplication.cpp TutorialApplication.cpp EventManager.cpp Ball.cpp GameObject.cpp
 OgreApp_CXXFLAGS = -I/usr/include/OGRE -pthread $(OIS_CFLAGS)
 OgreApp_LDADD = -L/usr/lib/x86_64-linux-gnu/OGRE-1.9.0 -lOgreMain -lpthread $(OIS_LIBS)
 OgreApp_LDFLAGS = -lOgreOverlay -lboost_system
@@ -456,6 +457,7 @@ distclean-compile:
 
 include ./$(DEPDIR)/OgreApp-Ball.Po
 include ./$(DEPDIR)/OgreApp-BaseApplication.Po
+include ./$(DEPDIR)/OgreApp-EventManager.Po
 include ./$(DEPDIR)/OgreApp-GameObject.Po
 include ./$(DEPDIR)/OgreApp-TutorialApplication.Po
 
@@ -507,6 +509,20 @@ OgreApp-TutorialApplication.obj: TutorialApplication.cpp
 #	$(AM_V_CXX)source='TutorialApplication.cpp' object='OgreApp-TutorialApplication.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(OgreApp_CPPFLAGS) $(CPPFLAGS) $(OgreApp_CXXFLAGS) $(CXXFLAGS) -c -o OgreApp-TutorialApplication.obj `if test -f 'TutorialApplication.cpp'; then $(CYGPATH_W) 'TutorialApplication.cpp'; else $(CYGPATH_W) '$(srcdir)/TutorialApplication.cpp'; fi`
+
+OgreApp-EventManager.o: EventManager.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(OgreApp_CPPFLAGS) $(CPPFLAGS) $(OgreApp_CXXFLAGS) $(CXXFLAGS) -MT OgreApp-EventManager.o -MD -MP -MF $(DEPDIR)/OgreApp-EventManager.Tpo -c -o OgreApp-EventManager.o `test -f 'EventManager.cpp' || echo '$(srcdir)/'`EventManager.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/OgreApp-EventManager.Tpo $(DEPDIR)/OgreApp-EventManager.Po
+#	$(AM_V_CXX)source='EventManager.cpp' object='OgreApp-EventManager.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(OgreApp_CPPFLAGS) $(CPPFLAGS) $(OgreApp_CXXFLAGS) $(CXXFLAGS) -c -o OgreApp-EventManager.o `test -f 'EventManager.cpp' || echo '$(srcdir)/'`EventManager.cpp
+
+OgreApp-EventManager.obj: EventManager.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(OgreApp_CPPFLAGS) $(CPPFLAGS) $(OgreApp_CXXFLAGS) $(CXXFLAGS) -MT OgreApp-EventManager.obj -MD -MP -MF $(DEPDIR)/OgreApp-EventManager.Tpo -c -o OgreApp-EventManager.obj `if test -f 'EventManager.cpp'; then $(CYGPATH_W) 'EventManager.cpp'; else $(CYGPATH_W) '$(srcdir)/EventManager.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/OgreApp-EventManager.Tpo $(DEPDIR)/OgreApp-EventManager.Po
+#	$(AM_V_CXX)source='EventManager.cpp' object='OgreApp-EventManager.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(OgreApp_CPPFLAGS) $(CPPFLAGS) $(OgreApp_CXXFLAGS) $(CXXFLAGS) -c -o OgreApp-EventManager.obj `if test -f 'EventManager.cpp'; then $(CYGPATH_W) 'EventManager.cpp'; else $(CYGPATH_W) '$(srcdir)/EventManager.cpp'; fi`
 
 OgreApp-Ball.o: Ball.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(OgreApp_CPPFLAGS) $(CPPFLAGS) $(OgreApp_CXXFLAGS) $(CXXFLAGS) -MT OgreApp-Ball.o -MD -MP -MF $(DEPDIR)/OgreApp-Ball.Tpo -c -o OgreApp-Ball.o `test -f 'Ball.cpp' || echo '$(srcdir)/'`Ball.cpp
