@@ -1,3 +1,2 @@
-*.o
-*.Po
-OgreApp
+Project1
+build/*
