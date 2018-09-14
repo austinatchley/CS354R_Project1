@@ -13,6 +13,7 @@ set(SRCS
 )
 set(HDRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/GameObject.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/BasicTutorial1.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Ball.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/EntityManager.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ComponentManager.h
