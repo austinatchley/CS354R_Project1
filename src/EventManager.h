@@ -114,7 +114,7 @@ namespace ECS
 	    void update();
 
         template <typename Event>
-        void event(const Event& event)
+        void event(Event&& event)
         {
             auto it = mSubscribers.find(getTypeIndex<Event>());
 

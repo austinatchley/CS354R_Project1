@@ -48,7 +48,8 @@ namespace Game
 
         virtual void receive(ECS::EventManager* eventManager, const TestEvent& event) override
         {
-            std::cout << "TestEvent was emitted with i = " << event.i << ", c = " << event.c << std::endl;
+            std::cout << "TestEvent was emitted with i = " << event.i << ", c = " << event.c << " " << std::endl;
+            event.test();
         }
     };
 } //namespace Game

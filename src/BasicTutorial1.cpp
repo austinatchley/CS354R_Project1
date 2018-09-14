@@ -29,12 +29,6 @@ THE SOFTWARE
 //! [fullsource]
 #include "BasicTutorial1.h"
 
-#include <Ogre.h>
-#include <OgreApplicationContext.h>
-#include <OgreInput.h>
-#include <OgreRTShaderSystem.h>
-#include <OgreApplicationContext.h>
-
 using namespace Ogre;
 using namespace OgreBites;
 
