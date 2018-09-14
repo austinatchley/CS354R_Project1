@@ -127,7 +127,13 @@ namespace Game
         TestEventSubscriber* sub = new TestEventSubscriber();
         mEventManager->connect<TestEvent>(sub);
 
+        MoveEntityEventSubscriber* moveEntitySub = new MoveEntityEventSubscriber();
+        mEventManager->connect<MoveEntityEvent>(moveEntitySub);
+
         mEventManager->event<TestEvent>({ 1, 'a' });
+
+        Ogre::Vector3 translation = Ogre::Vector3(40.f, 0.f, -100.f);
+        mEventManager->event<MoveEntityEvent>({ ogreNode4, translation });
     }
 
     static int counter = 0;

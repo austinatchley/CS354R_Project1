@@ -34,6 +34,31 @@ namespace Game
         ECS::EventManager* mEventManager;
     };
 
+    struct MoveEntityEvent
+    {
+        Ogre::SceneNode* entityNode;
+        Ogre::Vector3 translation;
+    };
+    
+    class MoveEntityEventSubscriber
+        : public ECS::EventSubscriber<MoveEntityEvent>
+    {
+    public:
+        virtual ~MoveEntityEventSubscriber() {}
+
+        virtual void receive(ECS::EventManager* eventManager, const MoveEntityEvent& event) override
+        {
+            Ogre::SceneNode* node = event.entityNode;
+
+            std::cout << "MoveEntity was emitted, translation.z = " << event.translation.z << " moved Z from " << node->getPosition().z << " to ";
+
+            Ogre::Vector3 translatedPosition = node->getPosition() + event.translation;
+            node->setPosition(translatedPosition);
+
+            std::cout << node->getPosition().z << std::endl;
+        }
+    };
+
     struct TestEvent
     {
         int i;
@@ -49,7 +74,6 @@ namespace Game
         virtual void receive(ECS::EventManager* eventManager, const TestEvent& event) override
         {
             std::cout << "TestEvent was emitted with i = " << event.i << ", c = " << event.c << " " << std::endl;
-            event.test();
         }
     };
 } //namespace Game
