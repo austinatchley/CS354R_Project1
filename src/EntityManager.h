@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 namespace ECS
 {
     using EntityId = unsigned long;
@@ -7,7 +9,7 @@ namespace ECS
     class Entity
     {
         friend class EntityManager;
-        static const EntityId Invalid = 0;
+        static const EntityId InvalidId = 0;
 
     public:
         Entity() = default;
@@ -50,7 +52,7 @@ namespace ECS
         }
 
     private:
-        const EntityId mID = Invalid;
+        EntityId mID = InvalidId;
     };
 
     class EntityManager
@@ -82,7 +84,6 @@ namespace ECS
     private:
         static EntityManager* mInstance;
         
-        using EntityTable = std::unordered_map<EntityId, Entity*>;
-        EntityTable mEntityTable;
+        std::unordered_map<EntityId, Entity*> mEntityTable;
     };
 }

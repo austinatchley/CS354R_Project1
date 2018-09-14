@@ -35,6 +35,12 @@ THE SOFTWARE
 #include <OgreApplicationContext.h>
 #include <iostream>
 
+#include "EventManager.h"
+#include "EntityManager.h"
+#include "ComponentManager.h"
+#include "GameObject.h"
+#include "Ball.h"
+
 using namespace Ogre;
 using namespace OgreBites;
 
@@ -56,6 +62,24 @@ BasicTutorial1::BasicTutorial1()
 {
 }
 
+
+struct TestEvent
+{
+    int i;
+    char c;
+};
+
+class TestEventSubscriber
+    : public ECS::EventSubscriber<TestEvent>
+{
+public:
+    virtual ~TestEventSubscriber() {}
+
+    virtual void receive(ECS::EventManager* eventManager, const TestEvent& event) override
+    {
+        std::cout << "TestEvent was emitted" << std::endl;
+    }
+};
 
 void BasicTutorial1::setup()
 {
@@ -139,6 +163,13 @@ void BasicTutorial1::setup()
     //! [entity4]
 
     // -- tutorial section end --
+    
+    ECS::EventManager* eventManager = new ECS::EventManager(std::allocator<void>());
+
+    TestEventSubscriber* sub = new TestEventSubscriber();
+    eventManager->connect<TestEvent>(sub);
+
+    //eventManager->event<TestEvent>({ 1, 'a' });
 }
 
 

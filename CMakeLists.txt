@@ -9,6 +9,7 @@ set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/GameObject.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Ball.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/EventManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/EntityManager.cpp
 )
 set(HDRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/GameObject.h
