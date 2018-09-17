@@ -46,21 +46,21 @@ namespace Game
         addInputListener(this);
 
         // get a pointer to the already created root
-        Root* root = getRoot();
-        SceneManager* scnMgr = root->createSceneManager();
+        mRoot = getRoot();
+        mScnMgr = mRoot->createSceneManager();
 
         // register our scene with the RTSS
-        RTShader::ShaderGenerator* shadergen = RTShader::ShaderGenerator::getSingletonPtr();
-        shadergen->addSceneManager(scnMgr);
+        mShadergen = RTShader::ShaderGenerator::getSingletonPtr();
+        mShadergen->addSceneManager(mScnMgr);
 
         // -- tutorial section start --
         //! [turnlights]
-        scnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+        mScnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
         //! [turnlights]
 
         //! [newlight]
-        Light* light = scnMgr->createLight("MainLight");
-        SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+        Light* light = mScnMgr->createLight("MainLight");
+        SceneNode* lightNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
         lightNode->attachObject(light);
         //! [newlight]
 
@@ -69,10 +69,10 @@ namespace Game
         //! [lightpos]
 
         //! [camera]
-        SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+        SceneNode* camNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
 
         // create the camera
-        Camera* cam = scnMgr->createCamera("myCam");
+        Camera* cam = mScnMgr->createCamera("myCam");
         cam->setNearClipDistance(5); // specific to this sample
         cam->setAutoAspectRatio(true);
         camNode->attachObject(cam);
@@ -83,11 +83,11 @@ namespace Game
         //! [camera]
 
         //! [entity1]
-        Entity* ogreEntity = scnMgr->createEntity("ogrehead.mesh");
+        Entity* ogreEntity = mScnMgr->createEntity("ogrehead.mesh");
         //! [entity1]
 
         //! [entity1node]
-        SceneNode* ogreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+        SceneNode* ogreNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
         //! [entity1node]
 
         //! [entity1nodeattach]
@@ -99,22 +99,22 @@ namespace Game
         //! [cameramove]
 
         //! [entity2]
-        Entity* ogreEntity2 = scnMgr->createEntity("ogrehead.mesh");
-        SceneNode* ogreNode2 = scnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
+        Entity* ogreEntity2 = mScnMgr->createEntity("ogrehead.mesh");
+        SceneNode* ogreNode2 = mScnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
         ogreNode2->attachObject(ogreEntity2);
         //! [entity2]
 
         //! [entity3]
-        Entity* ogreEntity3 = scnMgr->createEntity("ogrehead.mesh");
-        SceneNode* ogreNode3 = scnMgr->getRootSceneNode()->createChildSceneNode();
+        Entity* ogreEntity3 = mScnMgr->createEntity("ogrehead.mesh");
+        SceneNode* ogreNode3 = mScnMgr->getRootSceneNode()->createChildSceneNode();
         ogreNode3->setPosition(0, 104, 0);
         ogreNode3->setScale(2, 1.2, 1);
         ogreNode3->attachObject(ogreEntity3);
         //! [entity3]
 
         //! [entity4]
-        Entity* ogreEntity4 = scnMgr->createEntity("ogrehead.mesh");
-        SceneNode* ogreNode4 = scnMgr->getRootSceneNode()->createChildSceneNode();
+        Entity* ogreEntity4 = mScnMgr->createEntity("ogrehead.mesh");
+        SceneNode* ogreNode4 = mScnMgr->getRootSceneNode()->createChildSceneNode();
         ogreNode4->setPosition(-84, 48, 0);
         ogreNode4->roll(Degree(-90));
         ogreNode4->attachObject(ogreEntity4);

@@ -31,6 +31,10 @@ namespace Game
         bool keyPressed(const KeyboardEvent& evt);
 
     private:
+        Root* mRoot;
+        SceneManager* mScnMgr;
+        RTShader::ShaderGenerator* mShadergen;
+
         ECS::EventManager* mEventManager;
     };
 
