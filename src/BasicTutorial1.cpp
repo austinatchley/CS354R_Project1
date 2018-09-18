@@ -83,7 +83,7 @@ namespace Game
         //! [camera]
 
         //! [entity1]
-        Entity* ogreEntity = mScnMgr->createEntity("ogrehead.mesh");
+        Entity* ogreEntity = mScnMgr->createEntity(OGRE_TEX);
         //! [entity1]
 
         //! [entity1node]
@@ -99,13 +99,13 @@ namespace Game
         //! [cameramove]
 
         //! [entity2]
-        Entity* ogreEntity2 = mScnMgr->createEntity("ogrehead.mesh");
+        Entity* ogreEntity2 = mScnMgr->createEntity(OGRE_TEX);
         SceneNode* ogreNode2 = mScnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
         ogreNode2->attachObject(ogreEntity2);
         //! [entity2]
 
         //! [entity3]
-        Entity* ogreEntity3 = mScnMgr->createEntity("ogrehead.mesh");
+        Entity* ogreEntity3 = mScnMgr->createEntity(OGRE_TEX);
         SceneNode* ogreNode3 = mScnMgr->getRootSceneNode()->createChildSceneNode();
         ogreNode3->setPosition(0, 104, 0);
         ogreNode3->setScale(2, 1.2, 1);
@@ -113,7 +113,7 @@ namespace Game
         //! [entity3]
 
         //! [entity4]
-        Entity* ogreEntity4 = mScnMgr->createEntity("ogrehead.mesh");
+        Entity* ogreEntity4 = mScnMgr->createEntity(OGRE_TEX);
         SceneNode* ogreNode4 = mScnMgr->getRootSceneNode()->createChildSceneNode();
         ogreNode4->setPosition(-84, 48, 0);
         ogreNode4->roll(Degree(-90));
@@ -121,6 +121,8 @@ namespace Game
         //! [entity4]
 
         // -- tutorial section end --
+        
+        std::cout << "OGRE_TEX: " << OGRE_TEX << std::endl;
         
         mEventManager = new ECS::EventManager(std::allocator<void>());
 

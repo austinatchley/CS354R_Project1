@@ -14,6 +14,10 @@
 #include "GameObject.h"
 #include "Ball.h"
 
+#define WALL_TEX "cube.mesh"
+#define BALL_TEX "sphere.mesh"
+#define OGRE_TEX "ogrehead.mesh"
+
 using namespace Ogre;
 using namespace OgreBites;
 
