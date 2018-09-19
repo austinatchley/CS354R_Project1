@@ -1,5 +1,4 @@
 #include "EventManager.h"
-#include "BasicTutorial1.h"
 
 namespace ECS
 {

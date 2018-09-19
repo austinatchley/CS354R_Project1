@@ -22,7 +22,7 @@ namespace ECS
     typedef std::allocator<Entity> Allocator;
     using TypeIndex = std::type_index;
 
-    using SubscriberPtrAllocator = std::allocator_traits<Allocator>::template rebind_alloc<BaseEventSubscriber*>; 
+    using SubscriberPtrAllocator = std::allocator_traits<Allocator>::template rebind_alloc<std::shared_ptr<BaseEventSubscriber>>; 
 	using EntityPtrAllocator = std::allocator_traits<Allocator>::template rebind_alloc<Entity*>;
 
     using SubscriberPairAllocator = std::allocator_traits<Allocator>::template rebind_alloc<std::pair<const TypeIndex, std::vector<std::shared_ptr<BaseEventSubscriber>, SubscriberPtrAllocator>>>;

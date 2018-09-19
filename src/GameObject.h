@@ -2,7 +2,7 @@
 
 #include <Ogre.h>
 
-#include "EntityManager.h"
+#include "ECS/EntityManager.h"
 
 namespace Game
 {

@@ -9,9 +9,9 @@
 
 #include <iostream>
 
-#include "EventManager.h"
-#include "EntityManager.h"
-#include "ComponentManager.h"
+#include "ECS/EventManager.h"
+#include "ECS/EntityManager.h"
+#include "ECS/ComponentManager.h"
 #include "GameObject.h"
 #include "Ball.h"
 

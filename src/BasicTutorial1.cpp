@@ -100,6 +100,8 @@ namespace Game
         mWallNode4->setPosition(-84, 48, 0);
         mWallNode4->roll(Degree(-90));
         mWallNode4->attachObject(wallEntity4);
+
+        std::cout << "\n\nEND SETUP()\n\n" << std::endl;
         // -- tutorial section end --
         
         mEventManager.reset(new ECS::EventManager(std::allocator<void>()));
@@ -118,31 +120,44 @@ namespace Game
         mEventManager->event<MoveEntityEvent>(*me);
     }
 
-    // static int counter = 0;
+    class RotateEntityEvent
+        : public MoveEntityEvent
+    {
+    public:
+        RotateEntityEvent(SceneNode* n, Ogre::Vector3 r)
+            : MoveEntityEvent(n, Ogre::Vector3::ZERO, r)
+        {
+        }
+
+    private:
+        MoveEntityEvent* mMoveEntityEvent;
+    };
+
     bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
     {
-        MoveEntityEvent left(
-            mWallNode4,
-            Ogre::Vector3::ZERO,
-            Ogre::Vector3(0.f, 0.f, 0.1f));
-
-        MoveEntityEvent right = left;
-        right.rotation = Ogre::Vector3(0.f, 0.f, -0.1f);
+        Ogre::Vector3 leftVec = Ogre::Vector3(0.f, 0.f, 0.1f);
+        Ogre::Vector3 rightVec = Ogre::Vector3(0.f, 0.f, -0.1f);
 
         switch (evt.keysym.sym)
         {
         case SDLK_ESCAPE:
             getRoot()->queueEndRendering();
             break;
+
         case SDLK_SPACE:
-            mEventManager->update();
             break;
 
         case SDLK_LEFT:
-            mEventManager->event<MoveEntityEvent>(left);
+            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode1, leftVec)));
+            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode2, leftVec)));
+            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode3, leftVec)));
+            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode4, leftVec)));
             break;
         case SDLK_RIGHT:
-            mEventManager->event<MoveEntityEvent>(right);
+            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode1, rightVec)));
+            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode2, rightVec)));
+            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode3, rightVec)));
+            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode4, rightVec)));
             break;
 
         default:
@@ -155,6 +170,8 @@ namespace Game
     bool BasicTutorial1::frameRenderingQueued(const Ogre::FrameEvent& evt)
     {
         mEventManager->update();
+
+        return true;
     }
 
 } // namespace Game
