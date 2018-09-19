@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Ogre.h>
+#include <OgreMath.h>
 #include <OgreApplicationContext.h>
 #include <OgreInput.h>
 #include <OgreRTShaderSystem.h>
@@ -34,18 +35,41 @@ namespace Game
         void setup();
         bool keyPressed(const KeyboardEvent& evt);
 
+        bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+
     private:
         Root* mRoot;
         SceneManager* mScnMgr;
         RTShader::ShaderGenerator* mShadergen;
 
         ECS::EventManager* mEventManager;
+
+        // Game specific member vars
+        SceneNode* mMainLightNode;
+
+        SceneNode* mWallNode1;
+        SceneNode* mWallNode2;
+        SceneNode* mWallNode3;
+        SceneNode* mWallNode4;
     };
 
-    struct MoveEntityEvent
+    class MoveEntityEvent
+        : public ECS::BaseEvent
     {
+    public:
+        MoveEntityEvent(
+            Ogre::SceneNode* e,
+            Ogre::Vector3 t,
+            Ogre::Vector3 r)
+            : entityNode(e)
+            , translation(t)
+            , rotation(r)
+        {}
+        ~MoveEntityEvent() {}
+
         Ogre::SceneNode* entityNode;
         Ogre::Vector3 translation;
+        Ogre::Vector3 rotation;
     };
     
     class MoveEntityEventSubscriber
@@ -58,17 +82,37 @@ namespace Game
         {
             Ogre::SceneNode* node = event.entityNode;
 
-            std::cout << "MoveEntity was emitted, translation.z = " << event.translation.z << " moved Z from " << node->getPosition().z << " to ";
+            std::cout << "MoveEntity was emitted, translation = (" <<
+                event.translation.x << ", " <<
+                event.translation.y << ", " <<
+                event.translation.z << 
+                "), rotation = (" << 
+                event.rotation.x << ", " <<
+                event.rotation.y << ", " <<
+                event.rotation.z << 
+                ")" << std::endl;
 
-            Ogre::Vector3 translatedPosition = node->getPosition() + event.translation;
+            // Translate
+            const Ogre::Vector3 translatedPosition = node->getPosition() + event.translation;
             node->setPosition(translatedPosition);
 
-            std::cout << node->getPosition().z << std::endl;
+            // Rotate
+            node->rotate(Ogre::Vector3::UNIT_X, Ogre::Radian(event.rotation.x)); 
+            node->rotate(Ogre::Vector3::UNIT_Y, Ogre::Radian(event.rotation.y)); 
+            node->rotate(Ogre::Vector3::UNIT_Z, Ogre::Radian(event.rotation.z));
         }
     };
 
-    struct TestEvent
+    class TestEvent
+        : public ECS::BaseEvent
     {
+    public:
+        TestEvent(int pi, char pc)
+            : i(pi)
+            , c(pc)
+        {}
+        ~TestEvent() {}
+
         int i;
         char c;
     };

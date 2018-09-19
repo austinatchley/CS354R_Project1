@@ -54,21 +54,15 @@ namespace Game
         mShadergen->addSceneManager(mScnMgr);
 
         // -- tutorial section start --
-        //! [turnlights]
         mScnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
-        //! [turnlights]
 
-        //! [newlight]
         Light* light = mScnMgr->createLight("MainLight");
-        SceneNode* lightNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
-        lightNode->attachObject(light);
-        //! [newlight]
+        mMainLightNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
+        mMainLightNode->attachObject(light);
 
-        //! [lightpos]
-        lightNode->setPosition(20, 80, 50);
-        //! [lightpos]
+        mMainLightNode->setPosition(0, 100, 0);
+        mMainLightNode->setOrientation(Ogre::Quaternion(0.707f, 0.f, 0.f, -0.707f));
 
-        //! [camera]
         SceneNode* camNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
 
         // create the camera
@@ -80,49 +74,29 @@ namespace Game
 
         // and tell it to render into the main window
         getRenderWindow()->addViewport(cam);
-        //! [camera]
 
-        //! [entity1]
-        Entity* ogreEntity = mScnMgr->createEntity(OGRE_TEX);
-        //! [entity1]
+        Entity* wallEntity1 = mScnMgr->createEntity(OGRE_TEX);
+        mWallNode1 = mScnMgr->getRootSceneNode()->createChildSceneNode();
+        mWallNode1->attachObject(wallEntity1);
 
-        //! [entity1node]
-        SceneNode* ogreNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
-        //! [entity1node]
-
-        //! [entity1nodeattach]
-        ogreNode->attachObject(ogreEntity);
-        //! [entity1nodeattach]
-
-        //! [cameramove]
         camNode->setPosition(0, 47, 222);
-        //! [cameramove]
 
-        //! [entity2]
-        Entity* ogreEntity2 = mScnMgr->createEntity(OGRE_TEX);
-        SceneNode* ogreNode2 = mScnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
-        ogreNode2->attachObject(ogreEntity2);
-        //! [entity2]
+        Entity* wallEntity2 = mScnMgr->createEntity(OGRE_TEX);
+        mWallNode2 = mScnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
+        mWallNode2->attachObject(wallEntity2);
 
-        //! [entity3]
-        Entity* ogreEntity3 = mScnMgr->createEntity(OGRE_TEX);
-        SceneNode* ogreNode3 = mScnMgr->getRootSceneNode()->createChildSceneNode();
-        ogreNode3->setPosition(0, 104, 0);
-        ogreNode3->setScale(2, 1.2, 1);
-        ogreNode3->attachObject(ogreEntity3);
-        //! [entity3]
+        Entity* wallEntity3 = mScnMgr->createEntity(OGRE_TEX);
+        mWallNode3 = mScnMgr->getRootSceneNode()->createChildSceneNode();
+        mWallNode3->setPosition(0, 104, 0);
+        mWallNode3->setScale(2, 1.2, 1);
+        mWallNode3->attachObject(wallEntity3);
 
-        //! [entity4]
-        Entity* ogreEntity4 = mScnMgr->createEntity(OGRE_TEX);
-        SceneNode* ogreNode4 = mScnMgr->getRootSceneNode()->createChildSceneNode();
-        ogreNode4->setPosition(-84, 48, 0);
-        ogreNode4->roll(Degree(-90));
-        ogreNode4->attachObject(ogreEntity4);
-        //! [entity4]
-
+        Entity* wallEntity4 = mScnMgr->createEntity(OGRE_TEX);
+        mWallNode4 = mScnMgr->getRootSceneNode()->createChildSceneNode();
+        mWallNode4->setPosition(-84, 48, 0);
+        mWallNode4->roll(Degree(-90));
+        mWallNode4->attachObject(wallEntity4);
         // -- tutorial section end --
-        
-        std::cout << "OGRE_TEX: " << OGRE_TEX << std::endl;
         
         mEventManager = new ECS::EventManager(std::allocator<void>());
 
@@ -132,30 +106,53 @@ namespace Game
         MoveEntityEventSubscriber* moveEntitySub = new MoveEntityEventSubscriber();
         mEventManager->connect<MoveEntityEvent>(moveEntitySub);
 
-        mEventManager->event<TestEvent>({ 1, 'a' });
+        TestEvent *e = new TestEvent(1, 'a');
+        mEventManager->event<TestEvent>(*e);
 
-        Ogre::Vector3 translation = Ogre::Vector3(40.f, 0.f, -100.f);
-        mEventManager->event<MoveEntityEvent>({ ogreNode4, translation });
+        const Ogre::Vector3 translation(40.f, 0.f, -100.f);
+        MoveEntityEvent *me = new MoveEntityEvent(mWallNode4, translation, Ogre::Vector3::ZERO);
+        mEventManager->event<MoveEntityEvent>(*me);
     }
 
-    static int counter = 0;
+    // static int counter = 0;
     bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
     {
+        MoveEntityEvent left(
+            mWallNode4,
+            Ogre::Vector3::ZERO,
+            Ogre::Vector3(0.f, 0.f, 0.1f));
+
+        MoveEntityEvent right = left;
+        right.rotation = Ogre::Vector3(0.f, 0.f, -0.1f);
+
         switch (evt.keysym.sym)
         {
         case SDLK_ESCAPE:
             getRoot()->queueEndRendering();
             break;
         case SDLK_SPACE:
-            mEventManager->event<TestEvent>({ ++counter, static_cast<char>('a' + (counter % 26)) });
+            mEventManager->update();
             break;
+
+        case SDLK_LEFT:
+            mEventManager->event<MoveEntityEvent>(left);
+            break;
+        case SDLK_RIGHT:
+            mEventManager->event<MoveEntityEvent>(right);
+            break;
+
         default:
             break;
         }
 
         return true;
     }
-    //! [fullsource]
+
+    bool BasicTutorial1::frameRenderingQueued(const Ogre::FrameEvent& evt)
+    {
+        mEventManager->update();
+    }
+
 } // namespace Game
 
 int main(int argc, char **argv)

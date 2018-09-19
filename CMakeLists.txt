@@ -1,5 +1,7 @@
 cmake_minimum_required (VERSION 3.3.0)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -20,6 +22,9 @@ set(HDRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/EventManager.h
 )
 
+set(3RD
+)
+
 project(OgreTutorialBootstrap)
 
 ## [discover_ogre]
@@ -30,5 +35,5 @@ find_package(OGRE 1.11 REQUIRED COMPONENTS Bites RTShaderSystem)
 file(COPY ${OGRE_CONFIG_DIR}/resources.cfg DESTINATION ${CMAKE_BINARY_DIR})
 ## [discover_ogre]
 
-add_executable(Project1 ${HDRS} ${SRCS})
+add_executable(Project1 ${3RD} ${HDRS} ${SRCS})
 target_link_libraries(Project1 ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
