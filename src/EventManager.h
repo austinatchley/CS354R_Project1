@@ -6,6 +6,7 @@
 #include "ComponentManager.h"
 
 #include <unordered_map>
+#include <memory>
 #include <functional>
 #include <iostream>
 #include <typeindex>
@@ -24,10 +25,10 @@ namespace ECS
     using SubscriberPtrAllocator = std::allocator_traits<Allocator>::template rebind_alloc<BaseEventSubscriber*>; 
 	using EntityPtrAllocator = std::allocator_traits<Allocator>::template rebind_alloc<Entity*>;
 
-    using SubscriberPairAllocator = std::allocator_traits<Allocator>::template rebind_alloc<std::pair<const TypeIndex, std::vector<BaseEventSubscriber*, SubscriberPtrAllocator>>>;
+    using SubscriberPairAllocator = std::allocator_traits<Allocator>::template rebind_alloc<std::pair<const TypeIndex, std::vector<std::shared_ptr<BaseEventSubscriber>, SubscriberPtrAllocator>>>;
 	using EntityAllocator = std::allocator_traits<Allocator>::template rebind_alloc<Entity>;
     using SubscribersMap = std::unordered_map<TypeIndex
-            , std::vector<BaseEventSubscriber*, SubscriberPtrAllocator>
+            , std::vector<std::shared_ptr<BaseEventSubscriber>, SubscriberPtrAllocator>
             , std::hash<TypeIndex>
             , std::equal_to<TypeIndex>
             , SubscriberPairAllocator>;
@@ -97,14 +98,14 @@ namespace ECS
 
             if (it == mSubscribers.end())
             {
-                std::vector<BaseEventSubscriber*, SubscriberPtrAllocator> subList(mEntAlloc);
-                subList.push_back(subscriber);
+                std::vector<std::shared_ptr<BaseEventSubscriber>, SubscriberPtrAllocator> subList(mEntAlloc);
+                subList.push_back(std::shared_ptr<BaseEventSubscriber>(subscriber));
 
                 mSubscribers.insert({ index, subList });
             }
             else
             {
-                it->second.push_back(subscriber);
+                it->second.push_back(std::shared_ptr<BaseEventSubscriber>(subscriber));
             }
         }
 
@@ -137,13 +138,15 @@ namespace ECS
             if (it != mSubscribers.end())
             {
                 const auto& subscribers = it->second;
-                for (BaseEventSubscriber* base : subscribers)
+                for (auto& base : subscribers)
                 {
-                    auto* sub = reinterpret_cast<EventSubscriber<Event>*>(base);
+                    auto sub = reinterpret_cast<EventSubscriber<Event>*>(base.get());
+
                     const auto boundFunc = std::bind(&EventSubscriber<Event>::receive, sub, this, event);
                     mEvents.push_back(std::function<void ()>(boundFunc));
                 }
             }
+            delete &event;
         }
 
         template <typename Event>

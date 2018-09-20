@@ -39,6 +39,10 @@ namespace Game
     {
     }
 
+    BasicTutorial1::~BasicTutorial1()
+    {
+    }
+
     void BasicTutorial1::setup()
     {
         // do not forget to call the base first
@@ -98,7 +102,7 @@ namespace Game
         mWallNode4->attachObject(wallEntity4);
         // -- tutorial section end --
         
-        mEventManager = new ECS::EventManager(std::allocator<void>());
+        mEventManager.reset(new ECS::EventManager(std::allocator<void>()));
 
         TestEventSubscriber* sub = new TestEventSubscriber();
         mEventManager->connect<TestEvent>(sub);

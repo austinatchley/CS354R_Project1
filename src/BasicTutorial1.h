@@ -30,7 +30,7 @@ namespace Game
     {
     public:
         BasicTutorial1();
-        virtual ~BasicTutorial1() {}
+        virtual ~BasicTutorial1();
 
         void setup();
         bool keyPressed(const KeyboardEvent& evt);
@@ -42,7 +42,7 @@ namespace Game
         SceneManager* mScnMgr;
         RTShader::ShaderGenerator* mShadergen;
 
-        ECS::EventManager* mEventManager;
+        std::unique_ptr<ECS::EventManager> mEventManager;
 
         // Game specific member vars
         SceneNode* mMainLightNode;
