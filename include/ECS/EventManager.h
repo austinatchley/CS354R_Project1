@@ -46,7 +46,7 @@ namespace ECS
     public:
         typedef std::size_t Family;
         
-        virtual ~BaseEvent();
+        virtual ~BaseEvent() {}
 
     protected:
         static Family mFamilyCounter;
@@ -126,7 +126,20 @@ namespace ECS
             }
         }
 
-	    void update();
+	    void update()
+        {
+            if (mEvents.empty())
+            {
+                return;
+            }
+
+            for (auto event : mEvents)
+            {
+                event();
+            }
+
+            mEvents.clear();
+        }
 
         // After the data structure for subscribers is modified, this should take an ID
         // so that we can subscribe to multiple channels for the same event
@@ -168,8 +181,13 @@ namespace ECS
             //sub->receive(eventManager, event);
         }
 
-        EventManager(Allocator alloc);
-        ~EventManager();
+        EventManager(Allocator alloc)
+                : mEntAlloc(alloc)
+                , mEntities({}, EntityPtrAllocator(alloc))
+                , mSubscribers({}, 0, std::hash<TypeIndex>(), std::equal_to<TypeIndex>(), SubscriberPtrAllocator(alloc))
+        {}
+
+        ~EventManager() {}
 
     private:
         std::vector<Entity*, EntityPtrAllocator> mEntities;

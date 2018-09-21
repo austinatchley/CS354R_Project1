@@ -10,7 +10,7 @@ namespace Game
         : public ECS::Entity
     {
     public:
-        GameObject();
-        ~GameObject();
+        GameObject() {}
+        ~GameObject() {}
     };
 }

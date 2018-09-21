@@ -17,12 +17,21 @@ namespace ECS
             : mID(id)
         {}
 
-        bool valid() const;
-        void invalidate();
+        bool valid() const
+        {
+            return mID != InvalidId;
+        }
+        
+        void invalidate()
+        {
+            mID = InvalidId;
+        }
 
         //Component management
         template <typename C, typename... Types>
-        void addComponent(Types&&... args);
+        void addComponent(Types&&... args)
+        {
+        }
 
         template <typename C>
         void removeComponent();
