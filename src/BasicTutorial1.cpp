@@ -120,19 +120,6 @@ namespace Game
         mEventManager->event<MoveEntityEvent>(*me);
     }
 
-    class RotateEntityEvent
-        : public MoveEntityEvent
-    {
-    public:
-        RotateEntityEvent(SceneNode* n, Ogre::Vector3 r)
-            : MoveEntityEvent(n, Ogre::Vector3::ZERO, r)
-        {
-        }
-
-    private:
-        MoveEntityEvent* mMoveEntityEvent;
-    };
-
     bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
     {
         Ogre::Vector3 leftVec = Ogre::Vector3(0.f, 0.f, 0.1f);
