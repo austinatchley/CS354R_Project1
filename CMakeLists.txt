@@ -10,32 +10,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fsanitize=address")
 
 set(SRCS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/BasicTutorial1.cpp
-)
-
-set(3RD
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.cpp
 )
 
 set(HDRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/BasicTutorial1.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.h
 )
-
-if(FALSE)
-set(HDRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/BasicTutorial1.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/GameObjects/GameObject.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/GameObjects/Ball.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Events/Events.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Events/EventSubscribers.h
-)
-set(ECS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/ECS/EntityManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/ECS/ComponentManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/ECS/EventManager.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/ECS/EventManager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/ECS/EntityManager.cpp
-)
-endif()
 
 project(Project1)
 

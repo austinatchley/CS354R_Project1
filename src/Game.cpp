@@ -27,23 +27,23 @@ THE SOFTWARE
 -------------------------------------------------------------------------*/
 
 //! [fullsource]
-#include "BasicTutorial1.h"
+#include "Game.h"
 
 using namespace Ogre;
 using namespace OgreBites;
 
 namespace Game
 {
-    BasicTutorial1::BasicTutorial1()
+    Game::Game()
         : ApplicationContext("OgreTutorialApp")
     {
     }
 
-    BasicTutorial1::~BasicTutorial1()
+    Game::~Game()
     {
     }
 
-    void BasicTutorial1::setup()
+    void Game::setup()
     {
         // do not forget to call the base first
         ApplicationContext::setup();
@@ -79,23 +79,23 @@ namespace Game
         // and tell it to render into the main window
         getRenderWindow()->addViewport(cam);
 
-        Entity* wallEntity1 = mScnMgr->createEntity(OGRE_TEX);
+        Entity* wallEntity1 = mScnMgr->createEntity(WALL_TEX);
         mWallNode1 = mScnMgr->getRootSceneNode()->createChildSceneNode();
         mWallNode1->attachObject(wallEntity1);
 
         camNode->setPosition(0, 47, 222);
 
-        Entity* wallEntity2 = mScnMgr->createEntity(OGRE_TEX);
+        Entity* wallEntity2 = mScnMgr->createEntity(WALL_TEX);
         mWallNode2 = mScnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
         mWallNode2->attachObject(wallEntity2);
 
-        Entity* wallEntity3 = mScnMgr->createEntity(OGRE_TEX);
+        Entity* wallEntity3 = mScnMgr->createEntity(WALL_TEX);
         mWallNode3 = mScnMgr->getRootSceneNode()->createChildSceneNode();
         mWallNode3->setPosition(0, 104, 0);
         mWallNode3->setScale(2, 1.2, 1);
         mWallNode3->attachObject(wallEntity3);
 
-        Entity* wallEntity4 = mScnMgr->createEntity(OGRE_TEX);
+        Entity* wallEntity4 = mScnMgr->createEntity(WALL_TEX);
         mWallNode4 = mScnMgr->getRootSceneNode()->createChildSceneNode();
         mWallNode4->setPosition(-84, 48, 0);
         mWallNode4->roll(Degree(-90));
@@ -120,7 +120,7 @@ namespace Game
         mEventManager->event<MoveEntityEvent>(*me);
     }
 
-    bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
+    bool Game::keyPressed(const KeyboardEvent& evt)
     {
         Ogre::Vector3 leftVec = Ogre::Vector3(0.f, 0.f, 0.1f);
         Ogre::Vector3 rightVec = Ogre::Vector3(0.f, 0.f, -0.1f);
@@ -154,7 +154,7 @@ namespace Game
         return true;
     }
 
-    bool BasicTutorial1::frameRenderingQueued(const Ogre::FrameEvent& evt)
+    bool Game::frameRenderingQueued(const Ogre::FrameEvent& evt)
     {
         mEventManager->update();
 
@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 {
     try
     {
-        Game::BasicTutorial1 app;
+        Game::Game app;
         app.initApp();
         app.getRoot()->startRendering();
         app.closeApp();

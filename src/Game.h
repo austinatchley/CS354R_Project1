@@ -26,13 +26,13 @@ using namespace OgreBites;
 
 namespace Game
 {
-    class BasicTutorial1
+    class Game
             : public ApplicationContext
             , public InputListener
     {
     public:
-        BasicTutorial1();
-        virtual ~BasicTutorial1();
+        Game();
+        virtual ~Game();
 
         void setup();
         bool keyPressed(const KeyboardEvent& evt);
