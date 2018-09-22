@@ -3,13 +3,13 @@
 #include "ECS/EventManager.h"
 #include "Events.h"
 
-class MoveEntityEventSubscriber
-    : public ECS::EventSubscriber<MoveEntityEvent>
+class TransformEntityEventSubscriber
+    : public ECS::EventSubscriber<TransformEntityEvent>
 {
 public:
-    virtual ~MoveEntityEventSubscriber() {}
+    virtual ~TransformEntityEventSubscriber() {}
 
-    virtual void receive(ECS::EventManager* eventManager, const MoveEntityEvent& event) override
+    virtual void receive(ECS::EventManager* eventManager, const TransformEntityEvent& event) override
     {
         Ogre::SceneNode* node = event.entityNode;
 

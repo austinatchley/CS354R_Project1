@@ -35,7 +35,7 @@ using namespace OgreBites;
 namespace Game
 {
     Game::Game()
-        : ApplicationContext("OgreTutorialApp")
+        : ApplicationContext("Project1")
     {
     }
 
@@ -45,7 +45,6 @@ namespace Game
 
     void Game::setup()
     {
-        // do not forget to call the base first
         ApplicationContext::setup();
         addInputListener(this);
 
@@ -57,73 +56,97 @@ namespace Game
         mShadergen = RTShader::ShaderGenerator::getSingletonPtr();
         mShadergen->addSceneManager(mScnMgr);
 
-        // -- tutorial section start --
-        mScnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+        mScnMgr->setAmbientLight(AMBIENT_LIGHT);
 
-        Light* light = mScnMgr->createLight("MainLight");
-        mMainLightNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
-        mMainLightNode->attachObject(light);
+        Ogre::Light* light = mScnMgr->createLight("MainLight");
+        light->setDiffuseColour(Ogre::ColourValue::White);
+        light->setSpecularColour(Ogre::ColourValue(0.4, 0.4, 0.4));
 
-        mMainLightNode->setPosition(0, 100, 0);
-        mMainLightNode->setOrientation(Ogre::Quaternion(0.707f, 0.f, 0.f, -0.707f));
+        Ogre::SceneNode* mainLightNode = mScnMgr->getRootSceneNode()->createChildSceneNode("MainLight");
+        mainLightNode->attachObject(light);
 
-        SceneNode* camNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
+        mainLightNode->setPosition(0, 200, 0);
+        mainLightNode->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Y);
+
+        mCamNode = mScnMgr->getRootSceneNode()->createChildSceneNode("myCam");
 
         // create the camera
-        Camera* cam = mScnMgr->createCamera("myCam");
-        cam->setNearClipDistance(5); // specific to this sample
+        Camera* cam = mScnMgr->createCamera("camera");
+        cam->setNearClipDistance(0.1);
         cam->setAutoAspectRatio(true);
-        camNode->attachObject(cam);
-        camNode->setPosition(0, 0, 140);
+        cam->lookAt(Ogre::Vector3::ZERO);
+
+        mCamNode->attachObject(cam);
+        mCamNode->setPosition(0, 10, 200);
 
         // and tell it to render into the main window
-        getRenderWindow()->addViewport(cam);
+        Ogre::Viewport* vp = getRenderWindow()->addViewport(cam);
+        vp->setBackgroundColour(Ogre::ColourValue(0.1f, 0.1f, 0.15f));
 
-        Entity* wallEntity1 = mScnMgr->createEntity(WALL_TEX);
-        mWallNode1 = mScnMgr->getRootSceneNode()->createChildSceneNode();
-        mWallNode1->attachObject(wallEntity1);
+        cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
 
-        camNode->setPosition(0, 47, 222);
+        for (int i = 0; i < 2; ++i)
+        {
+            Entity* ballEntity = mScnMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
+            ballEntity->setCastShadows(true);
 
-        Entity* wallEntity2 = mScnMgr->createEntity(WALL_TEX);
-        mWallNode2 = mScnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
-        mWallNode2->attachObject(wallEntity2);
+            Ogre::SceneNode* ballNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
 
-        Entity* wallEntity3 = mScnMgr->createEntity(WALL_TEX);
-        mWallNode3 = mScnMgr->getRootSceneNode()->createChildSceneNode();
-        mWallNode3->setPosition(0, 104, 0);
-        mWallNode3->setScale(2, 1.2, 1);
-        mWallNode3->attachObject(wallEntity3);
+            ballNode->setPosition(Ogre::Math::RangeRandom(-mWallSize, mWallSize), Ogre::Math::RangeRandom(-mWallSize, mWallSize), 0);
+            ballNode->setScale(0.01f, 0.01f, 0.01f);
 
-        Entity* wallEntity4 = mScnMgr->createEntity(WALL_TEX);
-        mWallNode4 = mScnMgr->getRootSceneNode()->createChildSceneNode();
-        mWallNode4->setPosition(-84, 48, 0);
-        mWallNode4->roll(Degree(-90));
-        mWallNode4->attachObject(wallEntity4);
+            ballNode->attachObject(ballEntity);
 
-        std::cout << "\n\nEND SETUP()\n\n" << std::endl;
-        // -- tutorial section end --
-        
+            mBalls.push_back(ballNode);
+            mBallVel.push_back(Vector3(0.f, 0.f, 0.f));
+        }
+
+        static const std::unordered_map<String, Vector3> planeNameToAxis = {
+            {"ground",  Vector3::UNIT_Y}, {"ceil",  Vector3::NEGATIVE_UNIT_Y},
+            {"left",    Vector3::UNIT_X}, {"right", Vector3::NEGATIVE_UNIT_X},
+            {"back",    Vector3::UNIT_Z}
+        };
+
+        for (const auto entry : planeNameToAxis)
+        {
+            auto name = entry.first;
+            auto norm = entry.second;
+
+            Plane plane(norm, -mWallSize);
+            MeshManager::getSingleton().createPlane(name,
+                ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                plane,
+                mWallSize * 2.f, mWallSize * 2.f, 20, 20,
+                true,
+                1, 5, 5,
+                norm.perpendicular()); 
+
+            Entity* planeEntity = mScnMgr->createEntity(name);
+            planeEntity->setCastShadows(false);
+            planeEntity->setMaterialName("Examples/Rockwall");
+
+            SceneNode* planeNode = mScnMgr->getRootSceneNode()->createChildSceneNode(name);
+            planeNode->attachObject(planeEntity);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////
         mEventManager.reset(new ECS::EventManager(std::allocator<void>()));
 
-        TestEventSubscriber* sub = new TestEventSubscriber();
-        mEventManager->connect<TestEvent>(sub);
-
-        MoveEntityEventSubscriber* moveEntitySub = new MoveEntityEventSubscriber();
-        mEventManager->connect<MoveEntityEvent>(moveEntitySub);
-
-        TestEvent *e = new TestEvent(1, 'a');
-        mEventManager->event<TestEvent>(*e);
-
-        const Ogre::Vector3 translation(40.f, 0.f, -100.f);
-        MoveEntityEvent *me = new MoveEntityEvent(mWallNode4, translation, Ogre::Vector3::ZERO);
-        mEventManager->event<MoveEntityEvent>(*me);
+        TransformEntityEventSubscriber* moveEntitySub = new TransformEntityEventSubscriber();
+        mEventManager->connect<TransformEntityEvent>(moveEntitySub);
     }
 
     bool Game::keyPressed(const KeyboardEvent& evt)
     {
-        Ogre::Vector3 leftVec = Ogre::Vector3(0.f, 0.f, 0.1f);
-        Ogre::Vector3 rightVec = Ogre::Vector3(0.f, 0.f, -0.1f);
+        static const Real mag = 0.5f;
+        static const Ogre::Vector3 leftVec  = Ogre::Vector3(-mag, 0.f, 0.f);
+        static const Ogre::Vector3 rightVec = Ogre::Vector3(mag, 0.f, 0.f);
+        static const Ogre::Vector3 forVec   = Ogre::Vector3(0.f, 0.f, -mag);
+        static const Ogre::Vector3 backVec  = Ogre::Vector3(0.f, 0.f, mag);
+        static const Ogre::Vector3 upVec    = Ogre::Vector3(0.f, mag, 0.f);
+        static const Ogre::Vector3 downVec  = Ogre::Vector3(0.f, -mag, 0.f);
+
+        //SceneNode* lightNode = mScnMgr->getSceneNode("MainLight");
 
         switch (evt.keysym.sym)
         {
@@ -133,19 +156,43 @@ namespace Game
 
         case SDLK_SPACE:
             break;
+         
+        case 'w':
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, forVec * 10.f)));
+            break;
+        case 's':
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, backVec * 10.f)));
+            break;
+
+        case SDLK_PAGEUP:
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, upVec * 10.f)));
+            break; 
+        case SDLK_F12:
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, downVec * 10.f)));
+            break;
+
+       case 'a':
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, leftVec * 5.f)));
+            break;
+        case 'd':
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, rightVec * 5.f)));
+            break; 
+
+
+        case SDLK_UP:
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, upVec)));
+            break;
+        case SDLK_DOWN:
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, downVec)));
+            break;
+
 
         case SDLK_LEFT:
-            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode1, leftVec)));
-            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode2, leftVec)));
-            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode3, leftVec)));
-            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode4, leftVec)));
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, leftVec)));
             break;
         case SDLK_RIGHT:
-            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode1, rightVec)));
-            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode2, rightVec)));
-            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode3, rightVec)));
-            mEventManager->event<MoveEntityEvent>(*(new RotateEntityEvent(mWallNode4, rightVec)));
-            break;
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, rightVec)));
+            break; 
 
         default:
             break;
@@ -156,6 +203,29 @@ namespace Game
 
     bool Game::frameRenderingQueued(const Ogre::FrameEvent& evt)
     {
+        Real dt = evt.timeSinceLastFrame;
+        /*
+        SceneNode* ballNode = mScnMgr->getSceneNode("ball");
+
+        if (ballNode)
+        {
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ballNode, Ogre::Vector3(50.f * dt * Ogre::Math::RangeRandom(-1.f, 1.f), 0.f, 0.f))));
+        }
+        */
+
+        for (int i = 0; i < mBalls.size(); ++i)
+        {
+            auto ball = mBalls[i];
+            mBallVel[i] += mGravity * dt;
+
+            Vector3 translatedVec = ball->getPosition();
+            translatedVec += mBallVel[i] * dt;
+
+            std::cout << "ID: " << i << ", dt: " << dt << ", Translating " << translatedVec.y << " in the y" << std::endl;
+
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ball, translatedVec)));
+        }
+
         mEventManager->update();
 
         return true;

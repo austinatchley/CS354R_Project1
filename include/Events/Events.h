@@ -18,19 +18,16 @@ public:
     char c;
 };
 
-class MoveEntityEvent
+class TransformEntityEvent
     : public ECS::BaseEvent
 {
 public:
-    MoveEntityEvent(
-        Ogre::SceneNode* e,
-        Ogre::Vector3 t,
-        Ogre::Vector3 r)
+    TransformEntityEvent(Ogre::SceneNode* e, Ogre::Vector3 t, Ogre::Vector3 r)
         : entityNode(e)
         , translation(t)
         , rotation(r)
     {}
-    ~MoveEntityEvent() {}
+    ~TransformEntityEvent() {}
 
     Ogre::SceneNode* entityNode;
     Ogre::Vector3 translation;
@@ -38,14 +35,21 @@ public:
 };
 
 class RotateEntityEvent
-    : public MoveEntityEvent
+    : public TransformEntityEvent
 {
 public:
     RotateEntityEvent(Ogre::SceneNode* n, Ogre::Vector3 r)
-        : MoveEntityEvent(n, Ogre::Vector3::ZERO, r)
+        : TransformEntityEvent(n, Ogre::Vector3::ZERO, r)
     {
     }
+};
 
-private:
-    MoveEntityEvent* mMoveEntityEvent;
+class TranslateEntityEvent
+    : public TransformEntityEvent
+{
+public:
+    TranslateEntityEvent(Ogre::SceneNode* n, Ogre::Vector3 t)
+        : TransformEntityEvent(n, t, Ogre::Vector3::ZERO)
+    {
+    }
 };
