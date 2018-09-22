@@ -21,8 +21,10 @@
 #define BALL_TEX "sphere.mesh"
 #define OGRE_TEX "ogrehead.mesh"
 
-#define AMBIENT_LIGHT Ogre::ColourValue(0.5, 0.5, 0.5)
-//#define AMBIENT_LIGHT Ogre::ColourValue(0.f, 0.f, 0.f)
+#define NUM_BALLS 100
+
+#define LIGHT_INTENSITY 0.2
+#define AMBIENT_LIGHT Ogre::ColourValue(LIGHT_INTENSITY, LIGHT_INTENSITY, LIGHT_INTENSITY)
 
 using namespace Ogre;
 using namespace OgreBites;
@@ -52,9 +54,10 @@ namespace Game
         // Game specific member vars
         std::vector<Ogre::SceneNode*> mBalls;
         std::vector<Vector3> mBallVel;
+        std::vector<Vector3> mBallPos;
         Ogre::SceneNode* mCamNode;
 
         const Real mWallSize = 20;
-        const Vector3 mGravity = Vector3(0.f, -.098f, 0.f);
+        const Vector3 mGravity = Vector3(0.f, -60.f, 0.f);
     };
 } //namespace Game

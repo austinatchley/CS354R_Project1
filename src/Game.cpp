@@ -65,7 +65,7 @@ namespace Game
         Ogre::SceneNode* mainLightNode = mScnMgr->getRootSceneNode()->createChildSceneNode("MainLight");
         mainLightNode->attachObject(light);
 
-        mainLightNode->setPosition(0, 200, 0);
+        mainLightNode->setPosition(0, mWallSize, 0);
         mainLightNode->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Y);
 
         mCamNode = mScnMgr->getRootSceneNode()->createChildSceneNode("myCam");
@@ -77,7 +77,7 @@ namespace Game
         cam->lookAt(Ogre::Vector3::ZERO);
 
         mCamNode->attachObject(cam);
-        mCamNode->setPosition(0, 10, 200);
+        mCamNode->setPosition(0, 5, 80);
 
         // and tell it to render into the main window
         Ogre::Viewport* vp = getRenderWindow()->addViewport(cam);
@@ -85,20 +85,20 @@ namespace Game
 
         cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
 
-        for (int i = 0; i < 2; ++i)
+        for (int i = 0; i < NUM_BALLS; ++i)
         {
             Entity* ballEntity = mScnMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
             ballEntity->setCastShadows(true);
 
             Ogre::SceneNode* ballNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
 
-            ballNode->setPosition(Ogre::Math::RangeRandom(-mWallSize, mWallSize), Ogre::Math::RangeRandom(-mWallSize, mWallSize), 0);
             ballNode->setScale(0.01f, 0.01f, 0.01f);
 
             ballNode->attachObject(ballEntity);
 
             mBalls.push_back(ballNode);
-            mBallVel.push_back(Vector3(0.f, 0.f, 0.f));
+            mBallPos.push_back(Vector3(Ogre::Math::RangeRandom(-mWallSize, mWallSize), Ogre::Math::RangeRandom(-mWallSize, mWallSize), 0));
+            mBallVel.push_back(Vector3(Ogre::Math::RangeRandom(-10.0, 10.0), 0.f, 0.f));
         }
 
         static const std::unordered_map<String, Vector3> planeNameToAxis = {
@@ -215,15 +215,42 @@ namespace Game
 
         for (int i = 0; i < mBalls.size(); ++i)
         {
+            const auto prevPos = mBallPos[i];
+
+            bool collision = false;
+            if ((prevPos.x <= -mWallSize && mBallVel[i].x < 0.0) || (prevPos.x >= mWallSize && mBallVel[i].x > 0.0))
+            {
+                mBallVel[i].x *= -1;
+                collision = true;
+            }
+            if ((prevPos.y <= -mWallSize && mBallVel[i].y < 0.0) || (prevPos.y >= mWallSize && mBallVel[i].y > 0.0))
+            {
+                mBallVel[i].y *= -1;
+                collision = true;
+            }
+            if ((prevPos.z <= -mWallSize && mBallVel[i].z < 0.0) || (prevPos.z >= mWallSize && mBallVel[i].z > 0.0))
+            {
+                mBallVel[i].z *= -1;
+                collision = true;
+            }
+
             auto ball = mBalls[i];
-            mBallVel[i] += mGravity * dt;
 
-            Vector3 translatedVec = ball->getPosition();
-            translatedVec += mBallVel[i] * dt;
+            if (collision)
+            {
+                mBallVel[i] += mGravity * dt / 2.0;
+            }
+            else
+            {
+                mBallVel[i] += mGravity * dt;
+            }
 
-            std::cout << "ID: " << i << ", dt: " << dt << ", Translating " << translatedVec.y << " in the y" << std::endl;
+            auto deltaPos = mBallVel[i] * dt;
+            auto newPos = prevPos + deltaPos;
 
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ball, translatedVec)));
+            //mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ball, deltaPos)));
+            ball->setPosition(newPos);
+            mBallPos[i] = newPos;
         }
 
         mEventManager->update();
