@@ -45,6 +45,8 @@ namespace Game
 
     void Game::setup()
     {
+        //////////////////////////////////////////////////////////////////
+        // Application Setup
         ApplicationContext::setup();
         addInputListener(this);
 
@@ -56,18 +58,32 @@ namespace Game
         mShadergen = RTShader::ShaderGenerator::getSingletonPtr();
         mShadergen->addSceneManager(mScnMgr);
 
+        //////////////////////////////////////////////////////////////////
+        // Lighting
         mScnMgr->setAmbientLight(AMBIENT_LIGHT);
 
         Ogre::Light* light = mScnMgr->createLight("MainLight");
         light->setDiffuseColour(Ogre::ColourValue::White);
         light->setSpecularColour(Ogre::ColourValue(0.4, 0.4, 0.4));
-
+        light->setType(Light::LT_SPOTLIGHT);
+        light->setSpotlightRange(Degree(0), Degree(90));
+        light->setAttenuation(mWallSize * 8.f, 1.f, 4.5f / (mWallSize * 8.f), 75.f / (mWallSize * mWallSize * 64.f));
         Ogre::SceneNode* mainLightNode = mScnMgr->getRootSceneNode()->createChildSceneNode("MainLight");
         mainLightNode->attachObject(light);
-
-        mainLightNode->setPosition(0, mWallSize, 0);
+        mainLightNode->setPosition(0, mWallSize - 1.f, 0);
         mainLightNode->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Y);
 
+        Light* pointLight = mScnMgr->createLight("PointLight");
+        pointLight->setType(Light::LT_POINT);
+        pointLight->setDiffuseColour(0.85, 0.1, 0.1);
+        pointLight->setSpecularColour(0.1, 0.1, 0.1);
+        pointLight->setAttenuation(100, 1.0, 0.045, 0.0075);
+        SceneNode* pointLightNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
+        pointLightNode->attachObject(pointLight);
+        pointLightNode->setPosition(Vector3(0, mWallSize - 1.f, -mWallSize + 1.f));
+
+        //////////////////////////////////////////////////////////////////
+        // Camera
         mCamNode = mScnMgr->getRootSceneNode()->createChildSceneNode("myCam");
 
         // create the camera
@@ -85,26 +101,31 @@ namespace Game
 
         cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
 
+        //////////////////////////////////////////////////////////////////
+        // Balls
         for (int i = 0; i < NUM_BALLS; ++i)
         {
             Entity* ballEntity = mScnMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
             ballEntity->setCastShadows(true);
+            ballEntity->setMaterialName("Examples/SphereMappedRustySteel");
 
             Ogre::SceneNode* ballNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
 
-            ballNode->setScale(0.01f, 0.01f, 0.01f);
+            ballNode->setScale(BALL_RADIUS / 100.f, BALL_RADIUS / 100.f, BALL_RADIUS / 100.f);
 
             ballNode->attachObject(ballEntity);
 
             mBalls.push_back(ballNode);
-            mBallPos.push_back(Vector3(Ogre::Math::RangeRandom(-mWallSize, mWallSize), Ogre::Math::RangeRandom(-mWallSize, mWallSize), 0));
+            mBallPos.push_back(Vector3(Math::RangeRandom(-mWallSize, mWallSize), Ogre::Math::RangeRandom(-mWallSize, mWallSize), Math::RangeRandom(-mWallSize, mWallSize)));
             mBallVel.push_back(Vector3(Ogre::Math::RangeRandom(-10.0, 10.0), 0.f, 0.f));
         }
 
+        //////////////////////////////////////////////////////////////////
+        // Planes
         static const std::unordered_map<String, Vector3> planeNameToAxis = {
-            {"ground",  Vector3::UNIT_Y}, {"ceil",  Vector3::NEGATIVE_UNIT_Y},
             {"left",    Vector3::UNIT_X}, {"right", Vector3::NEGATIVE_UNIT_X},
-            {"back",    Vector3::UNIT_Z}
+            {"ground",  Vector3::UNIT_Y}, {"ceil",  Vector3::NEGATIVE_UNIT_Y},
+            {"back",    Vector3::UNIT_Z}, {"front", Vector3::NEGATIVE_UNIT_Z}
         };
 
         for (const auto entry : planeNameToAxis)
@@ -123,13 +144,16 @@ namespace Game
 
             Entity* planeEntity = mScnMgr->createEntity(name);
             planeEntity->setCastShadows(false);
-            planeEntity->setMaterialName("Examples/Rockwall");
+            planeEntity->setMaterialName("Examples/BeachStones");
 
             SceneNode* planeNode = mScnMgr->getRootSceneNode()->createChildSceneNode(name);
             planeNode->attachObject(planeEntity);
+
+            mWalls.push_back(plane);
         }
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////
+        // Event Manager
         mEventManager.reset(new ECS::EventManager(std::allocator<void>()));
 
         TransformEntityEventSubscriber* moveEntitySub = new TransformEntityEventSubscriber();
@@ -146,29 +170,24 @@ namespace Game
         static const Ogre::Vector3 upVec    = Ogre::Vector3(0.f, mag, 0.f);
         static const Ogre::Vector3 downVec  = Ogre::Vector3(0.f, -mag, 0.f);
 
-        //SceneNode* lightNode = mScnMgr->getSceneNode("MainLight");
-
         switch (evt.keysym.sym)
         {
         case SDLK_ESCAPE:
             getRoot()->queueEndRendering();
             break;
 
-        case SDLK_SPACE:
-            break;
-         
         case 'w':
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, forVec * 10.f)));
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, forVec * 5.f)));
             break;
         case 's':
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, backVec * 10.f)));
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, backVec * 5.f)));
             break;
 
         case SDLK_PAGEUP:
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, upVec * 10.f)));
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, upVec * 5.f)));
             break; 
-        case SDLK_F12:
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, downVec * 10.f)));
+        case SDLK_PAGEDOWN:
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, downVec * 5.f)));
             break;
 
        case 'a':
@@ -178,23 +197,22 @@ namespace Game
             mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, rightVec * 5.f)));
             break; 
 
-
         case SDLK_UP:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, upVec)));
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, rightVec * 0.25f)));
             break;
         case SDLK_DOWN:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, downVec)));
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, leftVec * 0.25f)));
             break;
-
 
         case SDLK_LEFT:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, leftVec)));
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, upVec * 0.25f)));
             break;
         case SDLK_RIGHT:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, rightVec)));
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, downVec * 0.25f)));
             break; 
 
         default:
+            return false;
             break;
         }
 
@@ -203,52 +221,35 @@ namespace Game
 
     bool Game::frameRenderingQueued(const Ogre::FrameEvent& evt)
     {
-        Real dt = evt.timeSinceLastFrame;
-        /*
-        SceneNode* ballNode = mScnMgr->getSceneNode("ball");
-
-        if (ballNode)
-        {
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ballNode, Ogre::Vector3(50.f * dt * Ogre::Math::RangeRandom(-1.f, 1.f), 0.f, 0.f))));
-        }
-        */
+        const Real dt = evt.timeSinceLastFrame;
 
         for (int i = 0; i < mBalls.size(); ++i)
         {
-            const auto prevPos = mBallPos[i];
+            const auto& prevPos = mBallPos[i];
+            Vector3 deltaPos = Vector3::ZERO;
 
             bool collision = false;
-            if ((prevPos.x <= -mWallSize && mBallVel[i].x < 0.0) || (prevPos.x >= mWallSize && mBallVel[i].x > 0.0))
+
+            for (int j = 0; j < mWalls.size(); ++j)
             {
-                mBallVel[i].x *= -1;
-                collision = true;
-            }
-            if ((prevPos.y <= -mWallSize && mBallVel[i].y < 0.0) || (prevPos.y >= mWallSize && mBallVel[i].y > 0.0))
-            {
-                mBallVel[i].y *= -1;
-                collision = true;
-            }
-            if ((prevPos.z <= -mWallSize && mBallVel[i].z < 0.0) || (prevPos.z >= mWallSize && mBallVel[i].z > 0.0))
-            {
-                mBallVel[i].z *= -1;
-                collision = true;
+                if (mWalls[j].getDistance(prevPos) <= BALL_RADIUS && mBallVel[i].dotProduct(mWalls[j].normal) < 0) 
+                {
+                    const auto& norm = mWalls[j].normal;
+
+                    mBallVel[i] -= 2 * norm * (norm.dotProduct(mBallVel[i]));
+                    deltaPos += norm * dt;
+
+                    collision = true;
+                }
             }
 
-            auto ball = mBalls[i];
+            const auto& ball = mBalls[i];
 
-            if (collision)
-            {
-                mBallVel[i] += mGravity * dt / 2.0;
-            }
-            else
-            {
-                mBallVel[i] += mGravity * dt;
-            }
+            mBallVel[i] += mGravity * dt;
+            deltaPos += mBallVel[i] * dt;
 
-            auto deltaPos = mBallVel[i] * dt;
-            auto newPos = prevPos + deltaPos;
+            const auto newPos = prevPos + deltaPos;
 
-            //mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ball, deltaPos)));
             ball->setPosition(newPos);
             mBallPos[i] = newPos;
         }

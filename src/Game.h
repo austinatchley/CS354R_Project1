@@ -22,6 +22,7 @@
 #define OGRE_TEX "ogrehead.mesh"
 
 #define NUM_BALLS 100
+#define BALL_RADIUS 1.f
 
 #define LIGHT_INTENSITY 0.2
 #define AMBIENT_LIGHT Ogre::ColourValue(LIGHT_INTENSITY, LIGHT_INTENSITY, LIGHT_INTENSITY)
@@ -49,13 +50,15 @@ namespace Game
         SceneManager* mScnMgr;
         RTShader::ShaderGenerator* mShadergen;
 
+        Ogre::SceneNode* mCamNode;
+
         std::unique_ptr<ECS::EventManager> mEventManager;
 
         // Game specific member vars
         std::vector<Ogre::SceneNode*> mBalls;
         std::vector<Vector3> mBallVel;
+        std::vector<Ogre::Plane> mWalls;
         std::vector<Vector3> mBallPos;
-        Ogre::SceneNode* mCamNode;
 
         const Real mWallSize = 20;
         const Vector3 mGravity = Vector3(0.f, -60.f, 0.f);
