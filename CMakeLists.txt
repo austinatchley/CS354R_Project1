@@ -11,13 +11,17 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fsanitize=address")
 
 set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/SoundManager.cpp
 )
 
 set(HDRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/SoundManager.h
 )
 
 project(Project1)
+
+find_package(SDL REQUIRED)
 
 # specify which version and components you need
 find_package(OGRE 1.11 REQUIRED COMPONENTS Bites RTShaderSystem)
@@ -27,9 +31,24 @@ file(COPY ${OGRE_CONFIG_DIR}/resources.cfg DESTINATION ${CMAKE_BINARY_DIR})
 
 add_executable(Project1 ${HDRS} ${SRCS})
 
+INCLUDE(FindPkgConfig)
+
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer)
+
+include_directories(
+    ${SDL2_INCLUDE_DIRS}
+    ${SDL2MIXER_INCLUDE_DIRS}
+)
+
 target_include_directories(
     Project1 PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/
 )
-target_link_libraries(Project1 ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
 
+target_link_libraries(Project1
+    ${OGRE_LIBRARIES}
+    ${OIS_LIBRARIES}
+    ${SDL2_LIBRARIES}
+    ${SDL2MIXER_LIBRARIES}
+)

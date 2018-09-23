@@ -116,8 +116,21 @@ namespace Game
             ballNode->attachObject(ballEntity);
 
             mBalls.push_back(ballNode);
-            mBallPos.push_back(Vector3(Math::RangeRandom(-mWallSize, mWallSize), Ogre::Math::RangeRandom(-mWallSize, mWallSize), Math::RangeRandom(-mWallSize, mWallSize)));
-            mBallVel.push_back(Vector3(Ogre::Math::RangeRandom(-10.0, 10.0), 0.f, 0.f));
+            mBallPos.push_back(
+                Vector3(
+                    Math::RangeRandom(-mWallSize, mWallSize), 
+                    Math::RangeRandom(-mWallSize, mWallSize),
+                    Math::RangeRandom(-mWallSize, mWallSize)
+                )
+            );
+
+            mBallVel.push_back(
+                Vector3(
+                    Math::RangeRandom(-20.0, 20.0),
+                    Math::RangeRandom(-20.0, 20.0),
+                    Math::RangeRandom(-20.0, 20.0)
+                )
+            );
         }
 
         //////////////////////////////////////////////////////////////////
@@ -158,21 +171,25 @@ namespace Game
 
         TransformEntityEventSubscriber* moveEntitySub = new TransformEntityEventSubscriber();
         mEventManager->connect<TransformEntityEvent>(moveEntitySub);
+
+        //////////////////////////////////////////////////////////////////
+        // Sound Manager
+        mSoundManager.reset(new SoundManager());
     }
 
     bool Game::keyPressed(const KeyboardEvent& evt)
     {
         static const Real mag = 0.5f;
-        static const Ogre::Vector3 leftVec  = Ogre::Vector3(-mag, 0.f, 0.f);
         static const Ogre::Vector3 rightVec = Ogre::Vector3(mag, 0.f, 0.f);
-        static const Ogre::Vector3 forVec   = Ogre::Vector3(0.f, 0.f, -mag);
-        static const Ogre::Vector3 backVec  = Ogre::Vector3(0.f, 0.f, mag);
+        static const Ogre::Vector3 leftVec  = Ogre::Vector3(-mag, 0.f, 0.f);
         static const Ogre::Vector3 upVec    = Ogre::Vector3(0.f, mag, 0.f);
         static const Ogre::Vector3 downVec  = Ogre::Vector3(0.f, -mag, 0.f);
+        static const Ogre::Vector3 backVec  = Ogre::Vector3(0.f, 0.f, mag);
+        static const Ogre::Vector3 forVec   = Ogre::Vector3(0.f, 0.f, -mag);
 
         switch (evt.keysym.sym)
         {
-        case SDLK_ESCAPE:
+        case OgreBites::SDLK_ESCAPE: // Exit the game
             getRoot()->queueEndRendering();
             break;
 
@@ -182,38 +199,35 @@ namespace Game
         case 's':
             mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, backVec * 5.f)));
             break;
-
-        case SDLK_PAGEUP:
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, upVec * 5.f)));
-            break; 
-        case SDLK_PAGEDOWN:
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, downVec * 5.f)));
-            break;
-
-       case 'a':
+        case 'a':
             mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, leftVec * 5.f)));
             break;
         case 'd':
             mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, rightVec * 5.f)));
             break; 
 
-        case SDLK_UP:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, rightVec * 0.25f)));
-            break;
-        case SDLK_DOWN:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, leftVec * 0.25f)));
+        case OgreBites::SDLK_PAGEUP:
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, upVec * 5.f)));
+            break; 
+        case OgreBites::SDLK_PAGEDOWN: // For some reason the 'End' key seems to trigger this keybinding
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, downVec * 5.f)));
             break;
 
-        case SDLK_LEFT:
+        case OgreBites::SDLK_UP:
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, rightVec * 0.25f)));
+            break;
+        case OgreBites::SDLK_DOWN:
+            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, leftVec * 0.25f)));
+            break;
+        case OgreBites::SDLK_LEFT:
             mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, upVec * 0.25f)));
             break;
-        case SDLK_RIGHT:
+        case OgreBites::SDLK_RIGHT:
             mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, downVec * 0.25f)));
             break; 
 
         default:
             return false;
-            break;
         }
 
         return true;
@@ -223,37 +237,42 @@ namespace Game
     {
         const Real dt = evt.timeSinceLastFrame;
 
+        // Check each ball for collisions
         for (int i = 0; i < mBalls.size(); ++i)
         {
             const auto& prevPos = mBallPos[i];
             Vector3 deltaPos = Vector3::ZERO;
 
-            bool collision = false;
-
+            // Check each wall to see if our ball has collided with it
             for (int j = 0; j < mWalls.size(); ++j)
             {
-                if (mWalls[j].getDistance(prevPos) <= BALL_RADIUS && mBallVel[i].dotProduct(mWalls[j].normal) < 0) 
+                if (mWalls[j].getDistance(prevPos) <= BALL_RADIUS
+                        && mBallVel[i].dotProduct(mWalls[j].normal) < 0) 
                 {
                     const auto& norm = mWalls[j].normal;
 
                     mBallVel[i] -= 2 * norm * (norm.dotProduct(mBallVel[i]));
-                    deltaPos += norm * dt;
+                    deltaPos += norm * dt; // Lift the ball off the plane slightly so it doesn't get stuck
 
-                    collision = true;
+                    // Play the wall hit sound
+                    mSoundManager->playWallHit();
                 }
             }
 
-            const auto& ball = mBalls[i];
-
+#ifdef APPLY_GRAVITY
             mBallVel[i] += mGravity * dt;
+#endif
+
             deltaPos += mBallVel[i] * dt;
+            const Vector3 newPos = prevPos + deltaPos;
 
-            const auto newPos = prevPos + deltaPos;
-
+            const auto& ball = mBalls[i];
             ball->setPosition(newPos);
+
             mBallPos[i] = newPos;
         }
 
+        // Tell the EventManager to update and dispatch the events in the queue
         mEventManager->update();
 
         return true;

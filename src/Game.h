@@ -17,6 +17,11 @@
 #include "Events/Events.h"
 #include "Events/EventSubscribers.h"
 
+#include "SoundManager.h"
+
+// Uncomment this line to apply gravity
+//#define APPLY_GRAVITY
+
 #define WALL_TEX "cube.mesh"
 #define BALL_TEX "sphere.mesh"
 #define OGRE_TEX "ogrehead.mesh"
@@ -53,6 +58,7 @@ namespace Game
         Ogre::SceneNode* mCamNode;
 
         std::unique_ptr<ECS::EventManager> mEventManager;
+        std::unique_ptr<SoundManager> mSoundManager;
 
         // Game specific member vars
         std::vector<Ogre::SceneNode*> mBalls;
