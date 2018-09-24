@@ -14,6 +14,7 @@ namespace Game
     {
     public:
         SoundManager();
+       ~SoundManager() {}
 
         virtual void receive(ECS::EventManager* eventManager, const PlaySoundEvent& event) override;
 

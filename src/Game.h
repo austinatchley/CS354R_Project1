@@ -26,7 +26,7 @@
 #define BALL_TEX "sphere.mesh"
 #define OGRE_TEX "ogrehead.mesh"
 
-#define NUM_BALLS 5
+#define NUM_BALLS 500
 #define BALL_RADIUS 1.f
 
 #define LIGHT_INTENSITY 0.2
@@ -58,7 +58,7 @@ namespace Game
         Ogre::SceneNode* mCamNode;
 
         std::unique_ptr<ECS::EventManager> mEventManager;
-        std::unique_ptr<SoundManager> mSoundManager;
+        SoundManager* mSoundManager;
 
         // Game specific member vars
         std::vector<Ogre::SceneNode*> mBalls;

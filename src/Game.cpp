@@ -29,6 +29,7 @@ THE SOFTWARE
 #include "Game.h"
 
 #include "Util/Util.h"
+#include <limits>
 
 using namespace Ogre;
 using namespace OgreBites;
@@ -175,8 +176,8 @@ namespace Game
 
         //////////////////////////////////////////////////////////////////
         // Sound Manager
-        mSoundManager.reset(new SoundManager());
-        mEventManager->connect<PlaySoundEvent>(mSoundManager.get());
+        mSoundManager = new SoundManager();
+        mEventManager->connect<PlaySoundEvent>(mSoundManager);
     }
 
     bool Game::keyPressed(const KeyboardEvent& evt)
@@ -254,7 +255,7 @@ namespace Game
                     const auto& norm = mWalls[j].normal;
 
                     mBallVel[i] -= 2 * norm * (norm.dotProduct(mBallVel[i]));
-                    deltaPos += norm * dt; // Lift the ball off the plane slightly so it doesn't get stuck
+                    deltaPos += norm * std::numeric_limits<float>::epsilon(); // Lift the ball off the plane slightly so it doesn't get stuck
 
                     // Play the wall hit sound
                     mEventManager->event<PlaySoundEvent>(*(new PlaySoundEvent(Util::Sound::Ball)));

@@ -25,5 +25,7 @@ This project serves as my introduction to Ogre. The assignment was just to creat
 	- The balls use the provided SphereMappedRustySteel material
 - Sound effects
 	- SDL2\_mixer is used to play a sound effect every time a ball hits a wall
+- Address Sanitizer
+    - If your C++ compiler supports it, setting the mode to DEBUG in CMakeLists will enable AddressSanitizer and detect memory issues
 
 Most of the 'event-driven' code that is present in the game uses my event system (e.g., camera movement, triggering audio, etc.).
