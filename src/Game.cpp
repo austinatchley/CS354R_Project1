@@ -27,8 +27,6 @@ namespace Game
         // get a pointer to the already created root
         mRoot = getRoot();
         mScnMgr = mRoot->createSceneManager();
-        mScnMgr->setShadowTechnique(ShadowTechnique::SHADOWTYPE_STENCIL_MODULATIVE);
-        mScnMgr->setSkyBox(true, "Examples/SpaceSkyBox");
 
         // register our scene with the RTSS
         mShadergen = RTShader::ShaderGenerator::getSingletonPtr();
@@ -48,17 +46,20 @@ namespace Game
 
         //////////////////////////////////////////////////////////////////
         // Lighting
+        mScnMgr->setShadowTechnique(ShadowTechnique::SHADOWTYPE_STENCIL_MODULATIVE);
+        mScnMgr->setSkyBox(true, "Examples/TrippySkyBox");
         mScnMgr->setAmbientLight(AMBIENT_LIGHT);
 
         Ogre::Light* light = mScnMgr->createLight("MainLight");
         light->setDiffuseColour(Ogre::ColourValue::White);
-        light->setSpecularColour(Ogre::ColourValue(0.4, 0.4, 0.4));
+        light->setSpecularColour(Ogre::ColourValue::White);
         light->setType(Light::LT_SPOTLIGHT);
         light->setSpotlightRange(Degree(0), Degree(90));
-        light->setAttenuation(mWallSize * 8.f, 1.f, 4.5f / (mWallSize * 8.f), 75.f / (mWallSize * mWallSize * 64.f));
+        light->setAttenuation(WALL_SIZE * 24.f, 1.f, 4.5f / (WALL_SIZE * 24.f), 75.f / (WALL_SIZE * WALL_SIZE * 576.f));
+
         Ogre::SceneNode* mainLightNode = mScnMgr->getRootSceneNode()->createChildSceneNode("MainLight");
         mainLightNode->attachObject(light);
-        mainLightNode->setPosition(0, mWallSize - 1.f, 0);
+        mainLightNode->setPosition(0, WALL_SIZE - 1.f, 0);
         mainLightNode->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Y);
 
         Light* pointLight = mScnMgr->createLight("PointLight");
@@ -66,9 +67,10 @@ namespace Game
         pointLight->setDiffuseColour(0.85, 0.1, 0.1);
         pointLight->setSpecularColour(0.1, 0.1, 0.1);
         pointLight->setAttenuation(100, 1.0, 0.045, 0.0075);
+
         SceneNode* pointLightNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
         pointLightNode->attachObject(pointLight);
-        pointLightNode->setPosition(Vector3(0, mWallSize - 1.f, -mWallSize + 1.f));
+        pointLightNode->setPosition(Vector3(0, WALL_SIZE - 1.f, -WALL_SIZE + 1.f));
 
         //////////////////////////////////////////////////////////////////
         // Camera
@@ -104,11 +106,11 @@ namespace Game
             mBalls.push_back(ball);
 
             const Vector3 pos(
-                Math::RangeRandom(-mWallSize, mWallSize),
-                Math::RangeRandom(-mWallSize, mWallSize),
-                Math::RangeRandom(-mWallSize, mWallSize)
+                Math::RangeRandom(-WALL_SIZE, WALL_SIZE),
+                Math::RangeRandom(-WALL_SIZE, WALL_SIZE),
+                Math::RangeRandom(-WALL_SIZE, WALL_SIZE)
             );
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ball.getNode(), pos)));
+            mEventManager->event<TransformEntityEvent>(new TranslateEntityEvent(ball.getNode(), pos));
         }
 
         //////////////////////////////////////////////////////////////////
@@ -124,11 +126,11 @@ namespace Game
             auto name = entry.first;
             auto norm = entry.second;
 
-            Plane plane(norm, -mWallSize);
+            Plane plane(norm, -WALL_SIZE);
             MeshManager::getSingleton().createPlane(name,
                 ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
                 plane,
-                mWallSize * 2.f, mWallSize * 2.f, 20, 20,
+                WALL_SIZE * 2.f, WALL_SIZE * 2.f, 20, 20,
                 true,
                 1, 5, 5,
                 norm.perpendicular()); 
@@ -161,36 +163,36 @@ namespace Game
             break;
 
         case 'w':
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, forVec * 5.f)));
+            mEventManager->event<TransformEntityEvent>(new TranslateEntityEvent(mCamNode, forVec * 5.f));
             break;
         case 's':
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, backVec * 5.f)));
+            mEventManager->event<TransformEntityEvent>(new TranslateEntityEvent(mCamNode, backVec * 5.f));
             break;
         case 'a':
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, leftVec * 5.f)));
+            mEventManager->event<TransformEntityEvent>(new TranslateEntityEvent(mCamNode, leftVec * 5.f));
             break;
         case 'd':
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, rightVec * 5.f)));
+            mEventManager->event<TransformEntityEvent>(new TranslateEntityEvent(mCamNode, rightVec * 5.f));
             break; 
 
         case OgreBites::SDLK_PAGEUP:
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, upVec * 5.f)));
+            mEventManager->event<TransformEntityEvent>(new TranslateEntityEvent(mCamNode, upVec * 5.f));
             break; 
         case OgreBites::SDLK_PAGEDOWN: // For some reason the 'End' key seems to trigger this keybinding
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(mCamNode, downVec * 5.f)));
+            mEventManager->event<TransformEntityEvent>(new TranslateEntityEvent(mCamNode, downVec * 5.f));
             break;
 
         case OgreBites::SDLK_UP:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, rightVec * 0.25f)));
+            mEventManager->event<TransformEntityEvent>(new RotateEntityEvent(mCamNode, rightVec * 0.25f));
             break;
         case OgreBites::SDLK_DOWN:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, leftVec * 0.25f)));
+            mEventManager->event<TransformEntityEvent>(new RotateEntityEvent(mCamNode, leftVec * 0.25f));
             break;
         case OgreBites::SDLK_LEFT:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, upVec * 0.25f)));
+            mEventManager->event<TransformEntityEvent>(new RotateEntityEvent(mCamNode, upVec * 0.25f));
             break;
         case OgreBites::SDLK_RIGHT:
-            mEventManager->event<TransformEntityEvent>(*(new RotateEntityEvent(mCamNode, downVec * 0.25f)));
+            mEventManager->event<TransformEntityEvent>(new RotateEntityEvent(mCamNode, downVec * 0.25f));
             break; 
 
         default:

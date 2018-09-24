@@ -52,10 +52,6 @@ namespace ECS
         static Family mFamilyCounter;
     };
 
-	/*typedef Simple::Signal<void (const void*)> EventSignal;
-    typedef std::shared_ptr<EventSignal> EventSignalPtr;
-    typedef std::weak_ptr<EventSignal> EventSignalWeakPtr;
-    */
     template <typename Derived>
     class Event
         : public BaseEvent
@@ -144,7 +140,7 @@ namespace ECS
         // After the data structure for subscribers is modified, this should take an ID
         // so that we can subscribe to multiple channels for the same event
         template <typename Event>
-        void event(const Event& event)
+        void event(const Event* event)
         {
             auto it = mSubscribers.find(getTypeIndex<Event>());
 
@@ -155,11 +151,11 @@ namespace ECS
                 {
                     auto sub = reinterpret_cast<EventSubscriber<Event>*>(base.get());
 
-                    const auto boundFunc = std::bind(&EventSubscriber<Event>::receive, sub, this, event);
+                    const auto boundFunc = std::bind(&EventSubscriber<Event>::receive, sub, this, *event);
                     mEvents.push_back(std::function<void ()>(boundFunc));
                 }
             }
-            delete &event;
+            delete event;
         }
 
         template <typename Event>

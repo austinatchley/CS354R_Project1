@@ -17,10 +17,12 @@
 #include "SoundManager.h"
 #include "Ball.h"
 
-#define NUM_BALLS 25
-#define BALL_RADIUS 1.f
+#define NUM_BALLS 10
+#define BALL_RADIUS 5.f
 
-#define LIGHT_INTENSITY 0.2
+#define WALL_SIZE 25.f
+
+#define LIGHT_INTENSITY 1.0
 #define AMBIENT_LIGHT Ogre::ColourValue(LIGHT_INTENSITY, LIGHT_INTENSITY, LIGHT_INTENSITY)
 
 using namespace Ogre;
@@ -59,7 +61,5 @@ namespace Game
 
         std::vector<Ball> mBalls;
         std::vector<Ogre::Plane> mWalls;
-
-        const Real mWallSize = 20;
     };
 } //namespace Game

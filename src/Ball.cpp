@@ -63,7 +63,7 @@ namespace Game
                 deltaPos += norm * std::numeric_limits<float>::epsilon(); 
 
                 // Play the wall hit sound
-                eventManager->event<PlaySoundEvent>(*(new PlaySoundEvent(Util::Sound::Ball)));
+                eventManager->event<PlaySoundEvent>(new PlaySoundEvent(Util::Sound::Ball));
             }
         }
             
