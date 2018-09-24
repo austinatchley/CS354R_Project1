@@ -1,3 +1,3 @@
-/home/austin/Downloads/Ogre1-11_Bootstrap/build/CMakeFiles/rebuild_cache.dir
-/home/austin/Downloads/Ogre1-11_Bootstrap/build/CMakeFiles/Project1.dir
-/home/austin/Downloads/Ogre1-11_Bootstrap/build/CMakeFiles/edit_cache.dir
+/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/edit_cache.dir
+/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/rebuild_cache.dir
+/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/Project1.dir

@@ -603,3 +603,31 @@ make[1]: Leaving directory '/home/austin/Downloads/Ogre1-11_Bootstrap/build/CMak
     Feature record: CXX_FEATURE:0cxx_variable_templates
     Feature record: CXX_FEATURE:0cxx_variadic_macros
     Feature record: CXX_FEATURE:0cxx_variadic_templates
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /u/austina/GameTech/Project1/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_971bb/fast"
+/usr/bin/make -f CMakeFiles/cmTC_971bb.dir/build.make CMakeFiles/cmTC_971bb.dir/build
+make[1]: Entering directory '/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_971bb.dir/CheckIncludeFile.c.o
+/usr/bin/cc     -o CMakeFiles/cmTC_971bb.dir/CheckIncludeFile.c.o   -c /u/austina/GameTech/Project1/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_971bb
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_971bb.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_971bb.dir/CheckIncludeFile.c.o  -o cmTC_971bb -rdynamic 
+make[1]: Leaving directory '/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/CMakeTmp'
+
+
+Determining if the function pthread_create exists in the pthread passed with the following output:
+Change Dir: /u/austina/GameTech/Project1/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_f1c70/fast"
+/usr/bin/make -f CMakeFiles/cmTC_f1c70.dir/build.make CMakeFiles/cmTC_f1c70.dir/build
+make[1]: Entering directory '/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_f1c70.dir/CheckFunctionExists.c.o
+/usr/bin/cc    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_f1c70.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+Linking C executable cmTC_f1c70
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f1c70.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_f1c70.dir/CheckFunctionExists.c.o  -o cmTC_f1c70 -rdynamic -lpthread 
+make[1]: Leaving directory '/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/CMakeTmp'
+
+
