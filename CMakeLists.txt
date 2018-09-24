@@ -9,6 +9,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fsanitize=address")
 
+set(OGRE_BUILD_SAMPLES TRUE)
+set(OGRE_STATIC TRUE)
+
 set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Ball.cpp
@@ -28,6 +31,7 @@ find_package(OGRE 1.11 REQUIRED COMPONENTS Bites RTShaderSystem)
 
 # copy resource.cfg next to our binaries where OGRE looks for it
 file(COPY ${OGRE_CONFIG_DIR}/resources.cfg DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${OGRE_CONFIG_DIR}/samples.cfg DESTINATION ${CMAKE_BINARY_DIR})
 
 add_executable(Project1 ${HDRS} ${SRCS})
 
@@ -50,4 +54,3 @@ target_link_libraries(Project1
     ${SDL2_LIBRARIES}
     ${SDL2MIXER_LIBRARIES}
 )
-

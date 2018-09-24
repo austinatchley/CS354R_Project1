@@ -28,6 +28,7 @@ namespace Game
         mRoot = getRoot();
         mScnMgr = mRoot->createSceneManager();
         mScnMgr->setShadowTechnique(ShadowTechnique::SHADOWTYPE_STENCIL_MODULATIVE);
+        mScnMgr->setSkyBox(true, "Examples/SpaceSkyBox");
 
         // register our scene with the RTSS
         mShadergen = RTShader::ShaderGenerator::getSingletonPtr();

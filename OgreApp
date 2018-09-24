@@ -1,0 +1,6 @@
+#!/bin/bash
+
+command="build/Project1"
+
+output=$(eval "$command")
+echo "$output"
