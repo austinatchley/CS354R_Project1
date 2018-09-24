@@ -1,3 +1,0 @@
-/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/edit_cache.dir
-/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/rebuild_cache.dir
-/v/filer5b/v38q001/austina/GameTech/Project1/build/CMakeFiles/Project1.dir
