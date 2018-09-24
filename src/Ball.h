@@ -1,9 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include <Ogre.h>
 
 #include "GameObjects/GameObject.h"
 
+#include "ECS/EventManager.h"
 #include "Events/Events.h"
 #include "Events/EventSubscribers.h"
 
@@ -25,6 +28,9 @@ namespace Game
         Ogre::SceneNode* getNode();
         const Ogre::Vector3& getVelocity();
         void setVelocity(const Ogre::Vector3& newVel);
+
+        void move(const std::vector<Ogre::Plane>& walls, ECS::EventManager* eventManager, const Ogre::Real dt);
+
         //virtual void receive(ECS::EventManager* eventManager, const TransformEntityEvent& event) override;
 
     private:

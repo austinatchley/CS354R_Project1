@@ -2,7 +2,6 @@
 
 namespace Game
 {
-
     Ball::Ball(
         Ogre::SceneManager* scnMgr,
         float radius = 1,
@@ -13,7 +12,6 @@ namespace Game
         , mMaterial(material)
         , mVelocity(velocity)
     {
-        std::cout << " made ball " << std::endl;
         Ogre::Entity* ballEntity = scnMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
         ballEntity->setCastShadows(true);
         ballEntity->setMaterialName(material);
@@ -39,4 +37,40 @@ namespace Game
     {
         mVelocity = newVel;
     }
-}
+
+    void Ball::move(const std::vector<Ogre::Plane>& walls, ECS::EventManager* eventManager, const Ogre::Real dt)
+    {
+        using namespace Ogre;
+
+        const auto& prevPos = mNode->getPosition();
+
+        Vector3 newVel = mVelocity;
+
+        Vector3 deltaPos = Vector3::ZERO;
+
+        // Check each wall to see if our ball has collided with it
+        for (int j = 0; j < walls.size(); ++j)
+        {
+            if (walls[j].getDistance(prevPos) <= mRadius
+                    && mVelocity.dotProduct(walls[j].normal) < 0) 
+            {
+                const auto& norm = walls[j].normal;
+
+                // Use the plane reflection formula
+                newVel -= 2 * norm * (norm.dotProduct(mVelocity));
+                
+                // Lift the ball off the plane slightly so it doesn't get stuck
+                deltaPos += norm * std::numeric_limits<float>::epsilon(); 
+
+                // Play the wall hit sound
+                eventManager->event<PlaySoundEvent>(*(new PlaySoundEvent(Util::Sound::Ball)));
+            }
+        }
+            
+        deltaPos += mVelocity * dt;
+        const Vector3 newPos = prevPos + deltaPos;
+
+        mVelocity = newVel;
+        mNode->setPosition(newPos);
+    }
+} // namespace Game

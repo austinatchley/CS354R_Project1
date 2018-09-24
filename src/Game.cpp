@@ -206,38 +206,7 @@ namespace Game
         // Check each ball for collisions
         for (int i = 0; i < mBalls.size(); ++i)
         {
-            auto& ball = mBalls[i];
-            const auto& prevPos = ball.getNode()->getPosition();
-            const auto& vel = ball.getVelocity();
-            Vector3 newVel = vel;
-
-            Vector3 deltaPos = Vector3::ZERO;
-
-            // Check each wall to see if our ball has collided with it
-            for (int j = 0; j < mWalls.size(); ++j)
-            {
-                if (mWalls[j].getDistance(prevPos) <= BALL_RADIUS
-                        && vel.dotProduct(mWalls[j].normal) < 0) 
-                {
-                    const auto& norm = mWalls[j].normal;
-
-                    // Use the plane reflection formula
-                    newVel -= 2 * norm * (norm.dotProduct(vel));
-                    
-                    // Lift the ball off the plane slightly so it doesn't get stuck
-                    deltaPos += norm * std::numeric_limits<float>::epsilon(); 
-
-                    // Play the wall hit sound
-                    mEventManager->event<PlaySoundEvent>(*(new PlaySoundEvent(Util::Sound::Ball)));
-                }
-            }
-
-            deltaPos += vel * dt;
-            const Vector3 newPos = prevPos + deltaPos;
-
-            ball.setVelocity(newVel);
-
-            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ball.getNode(), deltaPos)));
+            mBalls[i].move(mWalls, mEventManager.get(), dt);
         }
 
         // Tell the EventManager to dispatch the events in the queue
