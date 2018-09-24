@@ -11,11 +11,13 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fsanitize=address")
 
 set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Ball.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/SoundManager.cpp
 )
 
 set(HDRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Ball.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/SoundManager.h
 )
 

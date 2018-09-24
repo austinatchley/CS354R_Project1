@@ -1,31 +1,3 @@
-/*-------------------------------------------------------------------------
-This source file is a part of OGRE
-(Object-oriented Graphics Rendering Engine)
-For the latest info, see http://www.ogre3d.org/
-
-
-Copyright (c) 2000-2013 Torus Knot Software Ltd
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE
--------------------------------------------------------------------------*/
-
 #include "Game.h"
 
 #include "Util/Util.h"
@@ -55,10 +27,23 @@ namespace Game
         // get a pointer to the already created root
         mRoot = getRoot();
         mScnMgr = mRoot->createSceneManager();
+        mScnMgr->setShadowTechnique(ShadowTechnique::SHADOWTYPE_STENCIL_MODULATIVE);
 
         // register our scene with the RTSS
         mShadergen = RTShader::ShaderGenerator::getSingletonPtr();
         mShadergen->addSceneManager(mScnMgr);
+
+        //////////////////////////////////////////////////////////////////
+        // Event Manager
+        mEventManager.reset(new ECS::EventManager(std::allocator<void>()));
+
+        TransformEntitySubscriber* moveEntitySub = new TransformEntitySubscriber();
+        mEventManager->connect<TransformEntityEvent>(moveEntitySub);
+
+        //////////////////////////////////////////////////////////////////
+        // Sound Manager
+        mSoundManager = new SoundManager();
+        mEventManager->connect<PlaySoundEvent>(mSoundManager);
 
         //////////////////////////////////////////////////////////////////
         // Lighting
@@ -95,7 +80,7 @@ namespace Game
         cam->lookAt(Ogre::Vector3::ZERO);
 
         mCamNode->attachObject(cam);
-        mCamNode->setPosition(0, 5, 80);
+        mCamNode->setPosition(0, 2.5, 50);
 
         // and tell it to render into the main window
         Ogre::Viewport* vp = getRenderWindow()->addViewport(cam);
@@ -106,33 +91,23 @@ namespace Game
         //////////////////////////////////////////////////////////////////
         // Balls
         for (int i = 0; i < NUM_BALLS; ++i)
-        {
-            Entity* ballEntity = mScnMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
-            ballEntity->setCastShadows(true);
-            ballEntity->setMaterialName("Examples/SphereMappedRustySteel");
-
-            Ogre::SceneNode* ballNode = mScnMgr->getRootSceneNode()->createChildSceneNode();
-
-            ballNode->setScale(BALL_RADIUS / 100.f, BALL_RADIUS / 100.f, BALL_RADIUS / 100.f);
-
-            ballNode->attachObject(ballEntity);
-
-            mBalls.push_back(ballNode);
-            mBallPos.push_back(
-                Vector3(
-                    Math::RangeRandom(-mWallSize, mWallSize), 
-                    Math::RangeRandom(-mWallSize, mWallSize),
-                    Math::RangeRandom(-mWallSize, mWallSize)
-                )
+        {           
+            const Vector3 vel(
+                Math::RangeRandom(-20.0, 20.0),
+                Math::RangeRandom(-20.0, 20.0),
+                Math::RangeRandom(-20.0, 20.0)
             );
 
-            mBallVel.push_back(
-                Vector3(
-                    Math::RangeRandom(-20.0, 20.0),
-                    Math::RangeRandom(-20.0, 20.0),
-                    Math::RangeRandom(-20.0, 20.0)
-                )
+            Ball ball(mScnMgr, BALL_RADIUS, "Examples/SphereMappedRustySteel", vel);
+
+            mBalls.push_back(ball);
+
+            const Vector3 pos(
+                Math::RangeRandom(-mWallSize, mWallSize),
+                Math::RangeRandom(-mWallSize, mWallSize),
+                Math::RangeRandom(-mWallSize, mWallSize)
             );
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ball.getNode(), pos)));
         }
 
         //////////////////////////////////////////////////////////////////
@@ -166,18 +141,6 @@ namespace Game
 
             mWalls.push_back(plane);
         }
-
-        //////////////////////////////////////////////////////////////////
-        // Event Manager
-        mEventManager.reset(new ECS::EventManager(std::allocator<void>()));
-
-        TransformEntitySubscriber* moveEntitySub = new TransformEntitySubscriber();
-        mEventManager->connect<TransformEntityEvent>(moveEntitySub);
-
-        //////////////////////////////////////////////////////////////////
-        // Sound Manager
-        mSoundManager = new SoundManager();
-        mEventManager->connect<PlaySoundEvent>(mSoundManager);
     }
 
     bool Game::keyPressed(const KeyboardEvent& evt)
@@ -243,39 +206,41 @@ namespace Game
         // Check each ball for collisions
         for (int i = 0; i < mBalls.size(); ++i)
         {
-            const auto& prevPos = mBallPos[i];
+            auto& ball = mBalls[i];
+            const auto& prevPos = ball.getNode()->getPosition();
+            const auto& vel = ball.getVelocity();
+            Vector3 newVel = vel;
+
             Vector3 deltaPos = Vector3::ZERO;
 
             // Check each wall to see if our ball has collided with it
             for (int j = 0; j < mWalls.size(); ++j)
             {
                 if (mWalls[j].getDistance(prevPos) <= BALL_RADIUS
-                        && mBallVel[i].dotProduct(mWalls[j].normal) < 0) 
+                        && vel.dotProduct(mWalls[j].normal) < 0) 
                 {
                     const auto& norm = mWalls[j].normal;
 
-                    mBallVel[i] -= 2 * norm * (norm.dotProduct(mBallVel[i]));
-                    deltaPos += norm * std::numeric_limits<float>::epsilon(); // Lift the ball off the plane slightly so it doesn't get stuck
+                    // Use the plane reflection formula
+                    newVel -= 2 * norm * (norm.dotProduct(vel));
+                    
+                    // Lift the ball off the plane slightly so it doesn't get stuck
+                    deltaPos += norm * std::numeric_limits<float>::epsilon(); 
 
                     // Play the wall hit sound
                     mEventManager->event<PlaySoundEvent>(*(new PlaySoundEvent(Util::Sound::Ball)));
                 }
             }
 
-#ifdef APPLY_GRAVITY
-            mBallVel[i] += mGravity * dt;
-#endif
-
-            deltaPos += mBallVel[i] * dt;
+            deltaPos += vel * dt;
             const Vector3 newPos = prevPos + deltaPos;
 
-            const auto& ball = mBalls[i];
-            ball->setPosition(newPos);
+            ball.setVelocity(newVel);
 
-            mBallPos[i] = newPos;
+            mEventManager->event<TransformEntityEvent>(*(new TranslateEntityEvent(ball.getNode(), deltaPos)));
         }
 
-        // Tell the EventManager to update and dispatch the events in the queue
+        // Tell the EventManager to dispatch the events in the queue
         mEventManager->update();
 
         return true;

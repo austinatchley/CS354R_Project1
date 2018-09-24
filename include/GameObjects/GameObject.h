@@ -4,13 +4,9 @@
 
 #include "ECS/EntityManager.h"
 
-namespace Game
+class GameObject
 {
-    class GameObject
-        : public ECS::Entity
-    {
-    public:
-        GameObject() {}
-        ~GameObject() {}
-    };
-}
+public:
+    GameObject() {}
+    ~GameObject() {}
+};

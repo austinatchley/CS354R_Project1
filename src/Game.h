@@ -13,11 +13,11 @@
 #include "ECS/EntityManager.h"
 #include "ECS/ComponentManager.h"
 #include "GameObjects/GameObject.h"
-#include "GameObjects/Ball.h"
 #include "Events/Events.h"
 #include "Events/EventSubscribers.h"
 
 #include "SoundManager.h"
+#include "Ball.h"
 
 // Uncomment this line to apply gravity
 //#define APPLY_GRAVITY
@@ -26,7 +26,7 @@
 #define BALL_TEX "sphere.mesh"
 #define OGRE_TEX "ogrehead.mesh"
 
-#define NUM_BALLS 500
+#define NUM_BALLS 50
 #define BALL_RADIUS 1.f
 
 #define LIGHT_INTENSITY 0.2
@@ -61,10 +61,8 @@ namespace Game
         SoundManager* mSoundManager;
 
         // Game specific member vars
-        std::vector<Ogre::SceneNode*> mBalls;
-        std::vector<Vector3> mBallVel;
+        std::vector<Ball> mBalls;
         std::vector<Ogre::Plane> mWalls;
-        std::vector<Vector3> mBallPos;
 
         const Real mWallSize = 20;
         const Vector3 mGravity = Vector3(0.f, -60.f, 0.f);
