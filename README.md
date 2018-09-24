@@ -19,7 +19,7 @@ This project serves as my introduction to Ogre. The assignment was just to creat
 - Camera controls
 	- Use WASD to control forward/backward and strafe
 	- Use PgUp and PgDn/End (for some reason the Ogre bindings for PgDn maps to End on my keyboard)
-	- Up left/right/up/down arrow keys to rotate the camera
+	- Up left/right/up/down arrow keys to rotate the camera (DOOM-style :) )
 - Textured walls and balls
 	- The walls use the provided BeachStones example material
 	- The balls use the provided SphereMappedRustySteel material

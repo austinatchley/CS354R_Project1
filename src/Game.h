@@ -7,8 +7,6 @@
 #include <OgreRTShaderSystem.h>
 #include <OgreApplicationContext.h>
 
-#include <iostream>
-
 #include "ECS/EventManager.h"
 #include "ECS/EntityManager.h"
 #include "ECS/ComponentManager.h"
@@ -19,14 +17,7 @@
 #include "SoundManager.h"
 #include "Ball.h"
 
-// Uncomment this line to apply gravity
-//#define APPLY_GRAVITY
-
-#define WALL_TEX "cube.mesh"
-#define BALL_TEX "sphere.mesh"
-#define OGRE_TEX "ogrehead.mesh"
-
-#define NUM_BALLS 50
+#define NUM_BALLS 25
 #define BALL_RADIUS 1.f
 
 #define LIGHT_INTENSITY 0.2
@@ -46,25 +37,29 @@ namespace Game
         virtual ~Game();
 
         void setup();
+
         bool keyPressed(const KeyboardEvent& evt);
 
         bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
     private:
+        ///////////////////////////////////////////////////////
+        // System member vars
         Root* mRoot;
         SceneManager* mScnMgr;
         RTShader::ShaderGenerator* mShadergen;
 
-        Ogre::SceneNode* mCamNode;
-
         std::unique_ptr<ECS::EventManager> mEventManager;
         SoundManager* mSoundManager;
 
-        // Game specific member vars
+        ///////////////////////////////////////////////////////
+        // Game-specific member vars
+        Ogre::SceneNode* mCamNode;
+        Ogre::Viewport* mViewport;
+
         std::vector<Ball> mBalls;
         std::vector<Ogre::Plane> mWalls;
 
         const Real mWallSize = 20;
-        const Vector3 mGravity = Vector3(0.f, -60.f, 0.f);
     };
 } //namespace Game

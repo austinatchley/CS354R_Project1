@@ -80,13 +80,13 @@ namespace Game
         cam->lookAt(Ogre::Vector3::ZERO);
 
         mCamNode->attachObject(cam);
-        mCamNode->setPosition(0, 2.5, 50);
+        mCamNode->setPosition(0, 0, 60);
 
         // and tell it to render into the main window
-        Ogre::Viewport* vp = getRenderWindow()->addViewport(cam);
-        vp->setBackgroundColour(Ogre::ColourValue(0.1f, 0.1f, 0.15f));
+        mViewport = getRenderWindow()->addViewport(cam);
+        mViewport->setBackgroundColour(Ogre::ColourValue(0.1f, 0.1f, 0.15f));
 
-        cam->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
+        cam->setAspectRatio(Real(mViewport->getActualWidth()) / Real(mViewport->getActualHeight()));
 
         //////////////////////////////////////////////////////////////////
         // Balls
@@ -145,7 +145,7 @@ namespace Game
 
     bool Game::keyPressed(const KeyboardEvent& evt)
     {
-        static const Real mag = 0.5f;
+        static const Real mag = Math::HALF_PI / 2.f;
         static const Ogre::Vector3 rightVec = Ogre::Vector3(mag, 0.f, 0.f);
         static const Ogre::Vector3 leftVec  = Ogre::Vector3(-mag, 0.f, 0.f);
         static const Ogre::Vector3 upVec    = Ogre::Vector3(0.f, mag, 0.f);
