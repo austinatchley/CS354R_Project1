@@ -3,6 +3,7 @@
 #include <Ogre.h>
 
 #include "ECS/EventManager.h"
+#include "Util/Util.h"
 
 class TestEvent
     : public ECS::BaseEvent
@@ -52,4 +53,15 @@ public:
         : TransformEntityEvent(n, t, Ogre::Vector3::ZERO)
     {
     }
+};
+
+class PlaySoundEvent
+    : ECS::BaseEvent
+{
+public:
+    PlaySoundEvent(Util::Sound s)
+        : sound(s)
+    {}
+
+    Util::Sound sound; 
 };

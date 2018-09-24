@@ -1,5 +1,7 @@
 #include "SoundManager.h"
 
+#include "Util/Util.h"
+
 namespace Game
 {
     SoundManager::SoundManager()
@@ -12,11 +14,24 @@ namespace Game
         wallHit = Mix_LoadWAV("../media/sound/wallHit.wav");
     }
 
-    void SoundManager::playWallHit()
+    void SoundManager::receive(ECS::EventManager* eventManager, const PlaySoundEvent& event)
     {
-        if (!Mix_Playing(SoundChannel::Ball))
+        switch(event.sound)
         {
-            Mix_PlayChannel(SoundChannel::Ball, wallHit, 0);
+        case Util::Sound::Ball:
+            playBallHit();
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    void SoundManager::playBallHit()
+    {
+        if (!Util::Mix_Playing_Sound(Util::Sound::Ball))
+        {
+            Util::Mix_PlayChannel_Sound(Util::Sound::Ball, wallHit, 0);
         }
     }
 }

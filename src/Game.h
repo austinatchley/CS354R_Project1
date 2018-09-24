@@ -26,7 +26,7 @@
 #define BALL_TEX "sphere.mesh"
 #define OGRE_TEX "ogrehead.mesh"
 
-#define NUM_BALLS 100
+#define NUM_BALLS 5
 #define BALL_RADIUS 1.f
 
 #define LIGHT_INTENSITY 0.2

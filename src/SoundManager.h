@@ -4,19 +4,20 @@
 #include <SDL/SDL_mixer.h>
 #include <SDL/SDL_audio.h>
 
+#include "ECS/EventManager.h"
+#include "Events/EventSubscribers.h"
+
 namespace Game
 {
-    enum SoundChannel
-    {
-        Ball = 0
-    };
-
     class SoundManager
+        : public PlaySoundSubscriber
     {
     public:
         SoundManager();
 
-        void playWallHit();
+        virtual void receive(ECS::EventManager* eventManager, const PlaySoundEvent& event) override;
+
+        void playBallHit();
 
     protected:
         Mix_Chunk* wallHit;

@@ -3,25 +3,15 @@
 #include "ECS/EventManager.h"
 #include "Events.h"
 
-class TransformEntityEventSubscriber
+class TransformEntitySubscriber
     : public ECS::EventSubscriber<TransformEntityEvent>
 {
 public:
-    virtual ~TransformEntityEventSubscriber() {}
+    virtual ~TransformEntitySubscriber() {}
 
     virtual void receive(ECS::EventManager* eventManager, const TransformEntityEvent& event) override
     {
         Ogre::SceneNode* node = event.entityNode;
-
-        std::cout << "MoveEntity was emitted, translation = (" <<
-            event.translation.x << ", " <<
-            event.translation.y << ", " <<
-            event.translation.z << 
-            "), rotation = (" << 
-            event.rotation.x << ", " <<
-            event.rotation.y << ", " <<
-            event.rotation.z << 
-            ")" << std::endl;
 
         // Translate
         const Ogre::Vector3 translatedPosition = node->getPosition() + event.translation;
@@ -34,11 +24,11 @@ public:
     }
 };
 
-class TestEventSubscriber
+class TestSubscriber
     : public ECS::EventSubscriber<TestEvent>
 {
 public:
-    virtual ~TestEventSubscriber() {}
+    virtual ~TestSubscriber() {}
 
     virtual void receive(ECS::EventManager* eventManager, const TestEvent& event) override
     {
@@ -46,3 +36,14 @@ public:
     }
 };
 
+class PlaySoundSubscriber
+    : public ECS::EventSubscriber<PlaySoundEvent>
+{
+public:
+    virtual ~PlaySoundSubscriber() {}
+
+    virtual void receive(ECS::EventManager* eventManager, const PlaySoundEvent& event) override
+    {
+        (void) event.sound;
+    }
+};

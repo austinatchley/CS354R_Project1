@@ -26,8 +26,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE
 -------------------------------------------------------------------------*/
 
-//! [fullsource]
 #include "Game.h"
+
+#include "Util/Util.h"
 
 using namespace Ogre;
 using namespace OgreBites;
@@ -84,7 +85,7 @@ namespace Game
 
         //////////////////////////////////////////////////////////////////
         // Camera
-        mCamNode = mScnMgr->getRootSceneNode()->createChildSceneNode("myCam");
+        mCamNode = mScnMgr->getRootSceneNode()->createChildSceneNode("camera");
 
         // create the camera
         Camera* cam = mScnMgr->createCamera("camera");
@@ -169,12 +170,13 @@ namespace Game
         // Event Manager
         mEventManager.reset(new ECS::EventManager(std::allocator<void>()));
 
-        TransformEntityEventSubscriber* moveEntitySub = new TransformEntityEventSubscriber();
+        TransformEntitySubscriber* moveEntitySub = new TransformEntitySubscriber();
         mEventManager->connect<TransformEntityEvent>(moveEntitySub);
 
         //////////////////////////////////////////////////////////////////
         // Sound Manager
         mSoundManager.reset(new SoundManager());
+        mEventManager->connect<PlaySoundEvent>(mSoundManager.get());
     }
 
     bool Game::keyPressed(const KeyboardEvent& evt)
@@ -255,7 +257,7 @@ namespace Game
                     deltaPos += norm * dt; // Lift the ball off the plane slightly so it doesn't get stuck
 
                     // Play the wall hit sound
-                    mSoundManager->playWallHit();
+                    mEventManager->event<PlaySoundEvent>(*(new PlaySoundEvent(Util::Sound::Ball)));
                 }
             }
 
