@@ -20,6 +20,6 @@ namespace Game
 
     protected:
         Mix_Chunk* wallHit;
-        std::size_t flags;
+        unsigned flags;
     };
 }
